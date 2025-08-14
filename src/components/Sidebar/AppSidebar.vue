@@ -1,11 +1,9 @@
 <script setup lang="ts">
-import type { SidebarProps } from '@/components/ui/sidebar'
+import type {SidebarProps} from '@/components/ui/sidebar'
 
 import {
-  AudioWaveform,
   BookOpen,
   Bot,
-  Command,
   Frame,
   GalleryVerticalEnd,
   Map,
@@ -13,8 +11,8 @@ import {
   Settings2,
   SquareTerminal,
 } from "lucide-vue-next"
-import NavMain from '@/components/Sidebar/NavMain.vue'
-import NavProjects from '@/components/Sidebar/NavProjects.vue'
+import NavSpace from '@/components/Sidebar/NavSpace.vue'
+import NavTag from '@/components/Sidebar/NavTag.vue'
 import NavUser from '@/components/Sidebar/NavUser.vue'
 import TeamSwitcher from '@/components/Sidebar/TeamSwitcher.vue'
 
@@ -25,6 +23,7 @@ import {
   SidebarHeader,
   SidebarRail,
 } from '@/components/ui/sidebar'
+import NavIndex from "@/components/Sidebar/NavIndex.vue";
 
 const props = withDefaults(defineProps<SidebarProps>(), {
   collapsible: "icon",
@@ -39,19 +38,9 @@ const data = {
   },
   teams: [
     {
-      name: "Acme Inc",
+      name: "Sinan",
       logo: GalleryVerticalEnd,
       plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
     },
   ],
   navMain: [
@@ -164,15 +153,16 @@ const data = {
 <template>
   <Sidebar v-bind="props">
     <SidebarHeader>
-      <TeamSwitcher :teams="data.teams" />
+      <TeamSwitcher :teams="data.teams"/>
     </SidebarHeader>
     <SidebarContent>
-      <NavMain :items="data.navMain" />
-      <NavProjects :projects="data.projects" />
+      <NavIndex/>
+      <NavSpace :items="data.navMain"/>
+      <NavTag :projects="data.projects"/>
     </SidebarContent>
     <SidebarFooter>
-      <NavUser :user="data.user" />
+      <NavUser :user="data.user"/>
     </SidebarFooter>
-    <SidebarRail />
+    <SidebarRail/>
   </Sidebar>
 </template>

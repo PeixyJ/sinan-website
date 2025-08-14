@@ -1,11 +1,11 @@
 <script setup lang="ts">
+import { ref, onMounted } from "vue"
+import { useRouter } from "vue-router"
 import {
   BadgeCheck,
   Bell,
   ChevronsUpDown,
-  CreditCard,
   LogOut,
-  Sparkles,
 } from "lucide-vue-next"
 
 import {
@@ -28,22 +28,49 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar'
+import { UserAPI } from '@/services/api'
+import type { UserInfo } from '@/types/api'
 
-const props = defineProps<{
-  user: {
-    name: string
-    email: string
-    avatar: string
-  }
-}>()
-
+const user = ref<UserInfo | null>(null)
+const loading = ref(true)
+const router = useRouter()
 const { isMobile } = useSidebar()
+
+const fetchUserInfo = async () => {
+  try {
+    loading.value = true
+    const response = await UserAPI.info()
+
+    if (response.data.code === 0 && response.data.data) {
+      user.value = response.data.data
+    }
+  } catch (error) {
+    console.error('获取用户信息失败:', error)
+  } finally {
+    loading.value = false
+  }
+}
+
+const handleLogout = () => {
+  // 删除 cookie 中的 satoken
+  document.cookie = 'satoken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+
+  // 跳转到 /auth 页面
+  router.push('/auth')
+}
+
+onMounted(() => {
+  fetchUserInfo()
+})
 </script>
 
 <template>
   <SidebarMenu>
     <SidebarMenuItem>
-      <DropdownMenu>
+      <div v-if="loading" class="px-2 py-1 text-sm text-muted-foreground">
+        加载中...
+      </div>
+      <DropdownMenu v-else-if="user">
         <DropdownMenuTrigger as-child>
           <SidebarMenuButton
             size="lg"
@@ -52,7 +79,7 @@ const { isMobile } = useSidebar()
             <Avatar class="h-8 w-8 rounded-lg">
               <AvatarImage :src="user.avatar" :alt="user.name" />
               <AvatarFallback class="rounded-lg">
-                CN
+                {{ user.name.slice(0, 2).toUpperCase() }}
               </AvatarFallback>
             </Avatar>
             <div class="grid flex-1 text-left text-sm leading-tight">
@@ -73,7 +100,7 @@ const { isMobile } = useSidebar()
               <Avatar class="h-8 w-8 rounded-lg">
                 <AvatarImage :src="user.avatar" :alt="user.name" />
                 <AvatarFallback class="rounded-lg">
-                  CN
+                  {{ user.name.slice(0, 2).toUpperCase() }}
                 </AvatarFallback>
               </Avatar>
               <div class="grid flex-1 text-left text-sm leading-tight">
@@ -85,32 +112,24 @@ const { isMobile } = useSidebar()
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
             <DropdownMenuItem>
-              <Sparkles />
-              Upgrade to Pro
-            </DropdownMenuItem>
-          </DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuGroup>
-            <DropdownMenuItem>
               <BadgeCheck />
-              Account
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <CreditCard />
-              Billing
+              账户设置
             </DropdownMenuItem>
             <DropdownMenuItem>
               <Bell />
-              Notifications
+              通知设置
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
-          <DropdownMenuItem>
+          <DropdownMenuItem @click="handleLogout">
             <LogOut />
-            Log out
+            退出登录
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
+      <div v-else class="px-2 py-1 text-sm text-muted-foreground">
+        用户信息加载失败
+      </div>
     </SidebarMenuItem>
   </SidebarMenu>
 </template>

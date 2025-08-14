@@ -1,17 +1,58 @@
 <script setup lang="ts">
 import type { HTMLAttributes } from "vue"
+import { ref } from "vue"
 import { cn } from "@/lib/utils"
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { http } from '@/lib/http'
 
 const props = defineProps<{
   class?: HTMLAttributes["class"]
 }>()
+
+const email = ref('peixy_j@163.com')
+const password = ref('123')
+const loading = ref(false)
+
+
+const setCookie = (name: string, value: string, days: number = 7) => {
+  const expires = new Date()
+  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000))
+  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`
+}
+
+const handleLogin = async () => {
+  if (!email.value || !password.value) {
+    alert('请输入邮箱和密码')
+    return
+  }
+
+  loading.value = true
+  try {
+    const response = await http.post('/user/doLogin', {
+      email: email.value,
+      password: password.value
+    })
+
+    if (response.data.code === 0 && response.data.data.tokenValue) {
+      setCookie('satoken', response.data.data.tokenValue, 7)
+      alert('登录成功')
+      window.location.href = '/'
+    } else {
+      alert(response.data.message || '登录失败')
+    }
+  } catch (error: any) {
+    console.error('登录失败:', error)
+    alert(error.response?.data?.message || '登录失败，请重试')
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <template>
-  <form :class="cn('flex flex-col gap-6', props.class)">
+  <form :class="cn('flex flex-col gap-6', props.class)" @submit.prevent="handleLogin">
     <div class="flex flex-col items-center gap-2 text-center">
       <h1 class="text-2xl font-bold">
         Login to your account
@@ -23,7 +64,7 @@ const props = defineProps<{
     <div class="grid gap-6">
       <div class="grid gap-3">
         <Label for="email">Email</Label>
-        <Input id="email" type="email" placeholder="m@example.com" required />
+        <Input id="email" type="email" placeholder="m@example.com" required v-model="email" />
       </div>
       <div class="grid gap-3">
         <div class="flex items-center">
@@ -35,10 +76,10 @@ const props = defineProps<{
             Forgot your password?
           </a>
         </div>
-        <Input id="password" type="password" required />
+        <Input id="password" type="password" required v-model="password" />
       </div>
-      <Button type="submit" class-name="w-full">
-        Login
+      <Button type="submit" class-name="w-full" :disabled="loading">
+        {{ loading ? 'Logging in...' : 'Login' }}
       </Button>
       <div class="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
         <span class="bg-background text-muted-foreground relative z-10 px-2">

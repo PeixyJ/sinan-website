@@ -1,0 +1,2933 @@
+{
+  "info": {
+    "title": "Sinan",
+    "description": "",
+    "version": "1.0.0"
+  },
+  "tags": [],
+  "paths": {
+    "/user/doLogin": {
+      "get": {
+        "summary": "登录",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "tokenName": "",
+                  "tokenValue": "",
+                  "isLogin": false,
+                  "loginId": {},
+                  "loginType": "",
+                  "tokenTimeout": 0,
+                  "sessionTimeout": 0,
+                  "tokenSessionTimeout": 0,
+                  "tokenActiveTimeout": 0,
+                  "loginDeviceType": "",
+                  "tag": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultSaTokenInfo",
+              "description": "void"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/bookmark/most-visited": {
+      "get": {
+        "summary": "获取最常使用的书签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "",
+            "required": true,
+            "type": "integer",
+            "x-example": 10
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": [
+                  {
+                    "id": "",
+                    "namespaceId": "",
+                    "group": "",
+                    "name": "",
+                    "description": "",
+                    "url": "",
+                    "icon": 0,
+                    "num": 0
+                  }
+                ],
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultListBookmarkResp",
+              "description": "pres.peixinyi.sinan.common.Result<java.util.List<pres.peixinyi.sinan.dto.response.BookmarkVO>>"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/bookmark": {
+      "post": {
+        "summary": "新增书签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddBookmarkReq",
+              "description": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "userId": "",
+                  "namespaceId": "",
+                  "name": "",
+                  "description": "",
+                  "url": "",
+                  "icon": 0,
+                  "num": 0,
+                  "star": false,
+                  "createTime": "",
+                  "updateTime": "",
+                  "deleted": 0
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultSnBookmark",
+              "description": "pres.peixinyi.sinan.common.Result<pres.peixinyi.sinan.entity.SnBookmark>"
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "delete": {
+        "summary": "删除书签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "书签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": "",
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultString",
+              "description": "pres.peixinyi.sinan.common.Result<java.lang.String>"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "put": {
+        "summary": "编辑书签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EditBookmarkReq",
+              "description": "编辑书签请求"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "userId": "",
+                  "namespaceId": "",
+                  "name": "",
+                  "description": "",
+                  "url": "",
+                  "icon": 0,
+                  "num": 0,
+                  "star": false,
+                  "createTime": "",
+                  "updateTime": "",
+                  "deleted": 0
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultSnBookmark",
+              "description": "pres.peixinyi.sinan.common.Result<pres.peixinyi.sinan.entity.SnBookmark>"
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/bookmark/star": {
+      "post": {
+        "summary": "给书签加星标",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "书签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": "",
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultString",
+              "description": "pres.peixinyi.sinan.common.Result<java.lang.String>"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "delete": {
+        "summary": "取消书签星标",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "书签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": "",
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultString",
+              "description": "pres.peixinyi.sinan.common.Result<java.lang.String>"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "put": {
+        "summary": "切换书签星标状态",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "query",
+            "description": "书签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": "",
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultString",
+              "description": "pres.peixinyi.sinan.common.Result<java.lang.String>"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/bookmark/starred": {
+      "get": {
+        "summary": "获取星标书签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "限制数量，默认10",
+            "required": true,
+            "type": "integer",
+            "x-example": 10
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": [
+                  {
+                    "id": "",
+                    "namespaceId": "",
+                    "group": "",
+                    "name": "",
+                    "description": "",
+                    "url": "",
+                    "icon": 0,
+                    "num": 0
+                  }
+                ],
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultListBookmarkResp",
+              "description": "pres.peixinyi.sinan.common.Result<java.util.List<pres.peixinyi.sinan.dto.response.BookmarkResp>>"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/bookmark/space/{spaceId}": {
+      "get": {
+        "summary": "根据空间ID获取书签列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "spaceId",
+            "in": "path",
+            "description": "空间ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "搜索关键字（可选）",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": [
+                  {
+                    "id": "",
+                    "namespaceId": "",
+                    "name": "",
+                    "description": "",
+                    "url": "",
+                    "icon": 0,
+                    "num": 0,
+                    "tags": [
+                      {
+                        "id": "",
+                        "name": "",
+                        "color": "",
+                        "description": "",
+                        "createTime": "",
+                        "updateTime": ""
+                      }
+                    ]
+                  }
+                ],
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultListBookmarkResp",
+              "description": "书签列表"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/bookmark/space/{spaceId}/stats": {
+      "get": {
+        "summary": "获取空间的书签统计信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "spaceId",
+            "in": "path",
+            "description": "空间ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "spaceId": "",
+                  "totalCount": 0
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultSpaceBookmarkStatsResp",
+              "description": "书签统计"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/bookmark/tag/{tagId}": {
+      "get": {
+        "summary": "根据标签ID获取关联的书签列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "path",
+            "description": "标签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "search",
+            "in": "query",
+            "description": "搜索关键字（可选）",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": [
+                  {
+                    "id": "",
+                    "namespaceId": "",
+                    "name": "",
+                    "description": "",
+                    "url": "",
+                    "icon": 0,
+                    "num": 0,
+                    "tags": [
+                      {
+                        "id": "",
+                        "name": "",
+                        "color": "",
+                        "description": "",
+                        "createTime": "",
+                        "updateTime": ""
+                      }
+                    ]
+                  }
+                ],
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultListBookmarkResp",
+              "description": "书签列表"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/bookmark/tag/{tagId}/stats": {
+      "get": {
+        "summary": "获取标签的书签统计信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "tagId",
+            "in": "path",
+            "description": "标签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "tagId": "",
+                  "totalCount": 0
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultTagBookmarkStatsResp",
+              "description": "书签统计"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/space": {
+      "get": {
+        "summary": "获取用户的所有空间",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "搜索关键字（可选）",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": [
+                  {
+                    "id": "",
+                    "name": "",
+                    "icon": "",
+                    "sort": 0,
+                    "description": "",
+                    "createTime": "",
+                    "updateTime": ""
+                  }
+                ],
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultListSpaceResp",
+              "description": "空间列表"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "post": {
+        "summary": "新增空间",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddSpaceReq",
+              "description": "新增空间请求"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "name": "",
+                  "icon": "",
+                  "sort": 0,
+                  "description": "",
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultSpaceResp",
+              "description": "创建的空间信息"
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "put": {
+        "summary": "编辑空间",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EditSpaceReq",
+              "description": "编辑空间请求"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "name": "",
+                  "icon": "",
+                  "sort": 0,
+                  "description": "",
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultSpaceResp",
+              "description": "更新结果"
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/space/{id}": {
+      "get": {
+        "summary": "根据ID获取空间详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "空间ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "name": "",
+                  "icon": "",
+                  "sort": 0,
+                  "description": "",
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultSpaceResp",
+              "description": "空间详情"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "delete": {
+        "summary": "删除空间",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "空间ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": "",
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultString",
+              "description": "删除结果"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/space/sort": {
+      "put": {
+        "summary": "批量更新空间排序",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SortUpdateReq",
+                "description": "排序更新请求内部类"
+              },
+              "description": "排序更新列表，格式：[{\"id\": \"空间ID\", \"sort\": 排序值}]"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": "",
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultString",
+              "description": "更新结果"
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/tag": {
+      "get": {
+        "summary": "获取用户的所有标签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "搜索关键字（可选）",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": [
+                  {
+                    "id": "",
+                    "name": "",
+                    "color": "",
+                    "description": "",
+                    "createTime": "",
+                    "updateTime": ""
+                  }
+                ],
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultListTagResp",
+              "description": "标签列表"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "post": {
+        "summary": "新增标签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddTagReq",
+              "description": "新增标签请求"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "name": "",
+                  "color": "",
+                  "description": "",
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultTagResp",
+              "description": "创建的标签信息"
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "put": {
+        "summary": "编辑标签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EditTagReq",
+              "description": "编辑标签请求"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "name": "",
+                  "color": "",
+                  "description": "",
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultTagResp",
+              "description": "更新结果"
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/tag/{id}": {
+      "get": {
+        "summary": "根据ID获取标签详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "标签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "name": "",
+                  "color": "",
+                  "description": "",
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultTagResp",
+              "description": "标签详情"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "delete": {
+        "summary": "删除标签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "标签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": "",
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultString",
+              "description": "删除结果"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/tag/stats": {
+      "get": {
+        "summary": "获取用户标签统计信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "totalCount": 0
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultTagStatsResp",
+              "description": "标签统计"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/received/bookmark": {
+      "get": {
+        "summary": "获取用户的接收书签列表",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "search",
+            "in": "query",
+            "description": "搜索关键字（可选）",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "state",
+            "in": "query",
+            "description": "状态过滤（可选）1=待确认，2=已确认，3=已删除",
+            "required": false,
+            "type": "integer"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": [
+                  {
+                    "id": "",
+                    "namespaceId": "",
+                    "group": "",
+                    "name": "",
+                    "description": "",
+                    "url": "",
+                    "icon": 0,
+                    "tag": "",
+                    "state": 0,
+                    "createTime": "",
+                    "updateTime": ""
+                  }
+                ],
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultListReceivedBookmarkResp",
+              "description": "接收书签列表"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "post": {
+        "summary": "新增接收书签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddReceivedBookmarkReq",
+              "description": "新增接收书签请求"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "namespaceId": "",
+                  "group": "",
+                  "name": "",
+                  "description": "",
+                  "url": "",
+                  "icon": 0,
+                  "tag": "",
+                  "state": 0,
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultReceivedBookmarkResp",
+              "description": "创建的接收书签信息"
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "put": {
+        "summary": "编辑接收书签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/EditReceivedBookmarkReq",
+              "description": "编辑接收书签请求"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "namespaceId": "",
+                  "group": "",
+                  "name": "",
+                  "description": "",
+                  "url": "",
+                  "icon": 0,
+                  "tag": "",
+                  "state": 0,
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultReceivedBookmarkResp",
+              "description": "更新结果"
+            }
+          }
+        },
+        "security": [],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/received/bookmark/{id}": {
+      "get": {
+        "summary": "根据ID获取接收书签详情",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "接收书签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "id": "",
+                  "namespaceId": "",
+                  "group": "",
+                  "name": "",
+                  "description": "",
+                  "url": "",
+                  "icon": 0,
+                  "tag": "",
+                  "state": 0,
+                  "createTime": "",
+                  "updateTime": ""
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultReceivedBookmarkResp",
+              "description": "接收书签详情"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      },
+      "delete": {
+        "summary": "删除接收书签（状态改为3）",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "接收书签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": "",
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultString",
+              "description": "删除结果"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/received/bookmark/{id}/confirm": {
+      "post": {
+        "summary": "确认接收书签并转为正式书签",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "接收书签ID",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": "",
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultString",
+              "description": "确认结果"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    },
+    "/received/bookmark/stats": {
+      "get": {
+        "summary": "获取接收书签统计信息",
+        "deprecated": false,
+        "description": "",
+        "tags": [],
+        "parameters": [
+          {
+            "name": "satoken",
+            "in": "header",
+            "description": "",
+            "default": "{{satoken}}",
+            "type": "string",
+            "x-example": "{{satoken}}"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "headers": {},
+            "examples": {
+              "application/json": {
+                "code": 0,
+                "message": "",
+                "description": "",
+                "data": {
+                  "pendingCount": 0,
+                  "confirmedCount": 0,
+                  "deletedCount": 0,
+                  "totalCount": 0
+                },
+                "date": 0,
+                "flag": false,
+                "messageId": ""
+              }
+            },
+            "schema": {
+              "$ref": "#/definitions/ResultReceivedBookmarkStatsResp",
+              "description": "统计信息"
+            }
+          }
+        },
+        "security": [],
+        "produces": [
+          "application/json"
+        ]
+      }
+    }
+  },
+  "security": [],
+  "swagger": "2.0",
+  "definitions": {
+    "SaTokenInfo": {
+      "type": "object",
+      "properties": {
+        "tokenName": {
+          "type": "string",
+          "description": "token 名称"
+        },
+        "tokenValue": {
+          "type": "string",
+          "description": "token 值"
+        },
+        "isLogin": {
+          "type": "boolean",
+          "description": "此 token 是否已经登录"
+        },
+        "loginId": {
+          "type": "object",
+          "properties": {},
+          "description": "此 token 对应的 LoginId，未登录时为 null"
+        },
+        "loginType": {
+          "type": "string",
+          "description": "多账号体系下的账号类型"
+        },
+        "tokenTimeout": {
+          "type": "integer",
+          "description": "token 剩余有效期（单位: 秒）",
+          "format": "int64"
+        },
+        "sessionTimeout": {
+          "type": "integer",
+          "description": "Account-Session 剩余有效时间（单位: 秒）",
+          "format": "int64"
+        },
+        "tokenSessionTimeout": {
+          "type": "integer",
+          "description": "Token-Session 剩余有效时间（单位: 秒）",
+          "format": "int64"
+        },
+        "tokenActiveTimeout": {
+          "type": "integer",
+          "description": "token 距离被冻结还剩多少时间（单位: 秒）",
+          "format": "int64"
+        },
+        "loginDeviceType": {
+          "type": "string",
+          "description": "登录设备类型"
+        },
+        "tag": {
+          "type": "string",
+          "description": "自定义数据（暂无意义，留作扩展）"
+        }
+      }
+    },
+    "BookmarkResp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "书签ID"
+        },
+        "namespaceId": {
+          "type": "string",
+          "description": "空间"
+        },
+        "name": {
+          "type": "string",
+          "description": "书签名称"
+        },
+        "description": {
+          "type": "string",
+          "description": "书签描述"
+        },
+        "url": {
+          "type": "string",
+          "description": "书签url"
+        },
+        "icon": {
+          "type": "integer",
+          "description": "书签Icon"
+        },
+        "num": {
+          "type": "integer",
+          "description": "使用次数"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TagResp",
+            "description": ""
+          },
+          "description": "书签标签列表"
+        }
+      }
+    },
+    "TagResp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "标签ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "空间名称"
+        },
+        "color": {
+          "type": "string",
+          "description": "颜色"
+        },
+        "description": {
+          "type": "string",
+          "description": "标签描述"
+        },
+        "createTime": {
+          "type": "string",
+          "description": "创建时间"
+        },
+        "updateTime": {
+          "type": "string",
+          "description": "更新时间"
+        }
+      }
+    },
+    "SpaceResp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "空间ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "空间名称"
+        },
+        "icon": {
+          "type": "string",
+          "description": "空间图标"
+        },
+        "sort": {
+          "type": "integer",
+          "description": "排序值"
+        },
+        "description": {
+          "type": "string",
+          "description": "空间描述"
+        },
+        "createTime": {
+          "type": "string",
+          "description": "创建时间"
+        },
+        "updateTime": {
+          "type": "string",
+          "description": "更新时间"
+        }
+      }
+    },
+    "ReceivedBookmarkResp": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "书签ID"
+        },
+        "namespaceId": {
+          "type": "string",
+          "description": "空间ID"
+        },
+        "group": {
+          "type": "string",
+          "description": "书签组"
+        },
+        "name": {
+          "type": "string",
+          "description": "书签名称"
+        },
+        "description": {
+          "type": "string",
+          "description": "书签描述"
+        },
+        "url": {
+          "type": "string",
+          "description": "书签URL"
+        },
+        "icon": {
+          "type": "integer",
+          "description": "书签Icon"
+        },
+        "tag": {
+          "type": "string",
+          "description": "书签标签"
+        },
+        "state": {
+          "type": "integer",
+          "description": "状态 1为接收，2为已确认，3为删除"
+        },
+        "createTime": {
+          "type": "string",
+          "description": "创建时间"
+        },
+        "updateTime": {
+          "type": "string",
+          "description": "更新时间"
+        }
+      }
+    },
+    "ResultSaTokenInfo": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "$ref": "#/definitions/SaTokenInfo",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "ResultListBookmarkResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/BookmarkResp",
+            "description": ""
+          },
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "ResultListSpaceResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SpaceResp",
+            "description": "空间响应"
+          },
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "ResultListTagResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TagResp",
+            "description": "标签响应"
+          },
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "ResultListReceivedBookmarkResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ReceivedBookmarkResp",
+            "description": "接收书签响应"
+          },
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "SnBookmark": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "书签ID"
+        },
+        "userId": {
+          "type": "string",
+          "description": "用户ID"
+        },
+        "namespaceId": {
+          "type": "string",
+          "description": "空间"
+        },
+        "name": {
+          "type": "string",
+          "description": "书签名称"
+        },
+        "description": {
+          "type": "string",
+          "description": "书签描述"
+        },
+        "url": {
+          "type": "string",
+          "description": "书签url"
+        },
+        "icon": {
+          "type": "integer",
+          "description": "书签Icon"
+        },
+        "num": {
+          "type": "integer",
+          "description": "使用次数"
+        },
+        "star": {
+          "type": "boolean",
+          "description": ""
+        },
+        "createTime": {
+          "type": "string",
+          "description": ""
+        },
+        "updateTime": {
+          "type": "string",
+          "description": ""
+        },
+        "deleted": {
+          "type": "integer",
+          "description": ""
+        }
+      }
+    },
+    "ResultSpaceResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "$ref": "#/definitions/SpaceResp",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "ResultTagResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "$ref": "#/definitions/TagResp",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "ResultReceivedBookmarkResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "$ref": "#/definitions/ReceivedBookmarkResp",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "ResultSnBookmark": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "$ref": "#/definitions/SnBookmark",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "AddSpaceReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "空间名称"
+        },
+        "icon": {
+          "type": "string",
+          "description": "空间图标"
+        },
+        "sort": {
+          "type": "integer",
+          "description": "排序值"
+        },
+        "description": {
+          "type": "string",
+          "description": "空间描述"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "AddTagReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "标签名称"
+        },
+        "color": {
+          "type": "string",
+          "description": "标签颜色"
+        },
+        "description": {
+          "type": "string",
+          "description": "标签描述"
+        }
+      },
+      "required": [
+        "name"
+      ]
+    },
+    "AddReceivedBookmarkReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "书签名称"
+        },
+        "url": {
+          "type": "string",
+          "description": "书签URL"
+        },
+        "description": {
+          "type": "string",
+          "description": "书签描述"
+        },
+        "namespaceId": {
+          "type": "string",
+          "description": "书签空间"
+        },
+        "group": {
+          "type": "string",
+          "description": "书签组"
+        },
+        "icon": {
+          "type": "integer",
+          "description": "书签Icon"
+        },
+        "tag": {
+          "type": "string",
+          "description": "书签标签"
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ]
+    },
+    "AddBookmarkReq": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "书签名称"
+        },
+        "url": {
+          "type": "string",
+          "description": "书签URL"
+        },
+        "description": {
+          "type": "string",
+          "description": "书签描述"
+        },
+        "namespaceId": {
+          "type": "string",
+          "description": "书签空间"
+        },
+        "tagsIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "书签标签"
+        }
+      },
+      "required": [
+        "name",
+        "url"
+      ]
+    },
+    "EditSpaceReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "空间ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "空间名称"
+        },
+        "icon": {
+          "type": "string",
+          "description": "空间图标"
+        },
+        "sort": {
+          "type": "integer",
+          "description": "排序值"
+        },
+        "description": {
+          "type": "string",
+          "description": "空间描述"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "EditTagReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "标签ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "标签名称"
+        },
+        "color": {
+          "type": "string",
+          "description": "标签颜色"
+        },
+        "description": {
+          "type": "string",
+          "description": "标签描述"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "EditReceivedBookmarkReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "书签ID"
+        },
+        "name": {
+          "type": "string",
+          "description": "书签名称"
+        },
+        "url": {
+          "type": "string",
+          "description": "书签URL"
+        },
+        "description": {
+          "type": "string",
+          "description": "书签描述"
+        },
+        "namespaceId": {
+          "type": "string",
+          "description": "书签空间"
+        },
+        "group": {
+          "type": "string",
+          "description": "书签组"
+        },
+        "icon": {
+          "type": "integer",
+          "description": "书签Icon"
+        },
+        "tag": {
+          "type": "string",
+          "description": "书签标签"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "ResultString": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "type": "string",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "EditBookmarkReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": ""
+        },
+        "name": {
+          "type": "string",
+          "description": "书签名称"
+        },
+        "url": {
+          "type": "string",
+          "description": "书签URL"
+        },
+        "description": {
+          "type": "string",
+          "description": "书签描述"
+        },
+        "namespaceId": {
+          "type": "string",
+          "description": "书签空间"
+        },
+        "tags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "书签标签"
+        }
+      },
+      "required": [
+        "id"
+      ]
+    },
+    "SortUpdateReq": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": ""
+        },
+        "sort": {
+          "type": "integer",
+          "description": ""
+        }
+      }
+    },
+    "TagStatsResp": {
+      "type": "object",
+      "properties": {
+        "totalCount": {
+          "type": "integer",
+          "description": "",
+          "format": "int64"
+        }
+      }
+    },
+    "ReceivedBookmarkStatsResp": {
+      "type": "object",
+      "properties": {
+        "pendingCount": {
+          "type": "integer",
+          "description": "待确认数量",
+          "format": "int64"
+        },
+        "confirmedCount": {
+          "type": "integer",
+          "description": "已确认数量",
+          "format": "int64"
+        },
+        "deletedCount": {
+          "type": "integer",
+          "description": "已删除数量",
+          "format": "int64"
+        },
+        "totalCount": {
+          "type": "integer",
+          "description": "总数量",
+          "format": "int64"
+        }
+      }
+    },
+    "ResultTagStatsResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "$ref": "#/definitions/TagStatsResp",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "ResultReceivedBookmarkStatsResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "$ref": "#/definitions/ReceivedBookmarkStatsResp",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "SpaceBookmarkStatsResp": {
+      "type": "object",
+      "properties": {
+        "spaceId": {
+          "type": "string",
+          "description": ""
+        },
+        "totalCount": {
+          "type": "integer",
+          "description": "",
+          "format": "int64"
+        }
+      }
+    },
+    "ResultSpaceBookmarkStatsResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "$ref": "#/definitions/SpaceBookmarkStatsResp",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    },
+    "TagBookmarkStatsResp": {
+      "type": "object",
+      "properties": {
+        "tagId": {
+          "type": "string",
+          "description": ""
+        },
+        "totalCount": {
+          "type": "integer",
+          "description": "",
+          "format": "int64"
+        }
+      }
+    },
+    "ResultTagBookmarkStatsResp": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "description": "状态码"
+        },
+        "message": {
+          "type": "string",
+          "description": "消息"
+        },
+        "description": {
+          "type": "string",
+          "description": "异常描述"
+        },
+        "data": {
+          "$ref": "#/definitions/TagBookmarkStatsResp",
+          "description": "数据"
+        },
+        "date": {
+          "type": "integer",
+          "description": "时间",
+          "format": "int64"
+        },
+        "flag": {
+          "type": "boolean",
+          "description": "状态"
+        },
+        "messageId": {
+          "type": "string",
+          "description": "消息ID"
+        }
+      }
+    }
+  },
+  "securityDefinitions": {},
+  "x-components": {}
+}
