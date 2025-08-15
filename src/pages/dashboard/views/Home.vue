@@ -13,7 +13,10 @@
           placeholder="搜索" 
           class="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium file:text-foreground placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
         />
-        <button class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2">
+        <button 
+          @click="showAddBookmarkModal = true"
+          class="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow hover:bg-primary/90 h-9 px-4 py-2"
+        >
           添加书签
         </button>
       </div>
@@ -159,6 +162,12 @@
         </div>
       </div>
     </div>
+    
+    <!-- 添加书签弹窗 -->
+    <AddBookmarkModal 
+      v-model:open="showAddBookmarkModal" 
+      @success="handleBookmarkAdded"
+    />
   </div>
 </template>
 
@@ -166,12 +175,14 @@
 import { ref, onMounted } from 'vue'
 import { BookmarkAPI, ReceivedBookmarkAPI } from '@/services/api'
 import type { BookmarkResp, ReceivedBookmarkResp } from '@/types/api'
+import AddBookmarkModal from '@/components/Bookmark/AddBookmarkModal.vue'
 
 // 响应式数据
 const mostVisitedBookmarks = ref<BookmarkResp[]>([])
 const receivedBookmarks = ref<ReceivedBookmarkResp[]>([])
 const searchQuery = ref('')
 const loading = ref(false)
+const showAddBookmarkModal = ref(false)
 
 // 获取最常访问的书签
 const fetchMostVisited = async () => {
@@ -247,6 +258,12 @@ const ignoreBookmark = async (id: string) => {
 // 打开书签
 const openBookmark = (url: string) => {
   window.open(url, '_blank')
+}
+
+// 处理书签添加成功
+const handleBookmarkAdded = () => {
+  // 重新获取最常访问的书签以显示新添加的书签
+  fetchMostVisited()
 }
 
 // 页面加载时获取数据
