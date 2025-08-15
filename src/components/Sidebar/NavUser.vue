@@ -41,8 +41,8 @@ const fetchUserInfo = async () => {
     loading.value = true
     const response = await UserAPI.info()
 
-    if (response.data.code === 0 && response.data.data) {
-      user.value = response.data.data
+    if (response.code === 0 && response.data) {
+      user.value = response.data
     }
   } catch (error) {
     console.error('获取用户信息失败:', error)

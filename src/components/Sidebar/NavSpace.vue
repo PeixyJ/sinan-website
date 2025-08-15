@@ -38,9 +38,8 @@ const fetchSpaces = async () => {
   try {
     loading.value = true
     const response = await SpaceAPI.getAll()
-
-    if (response.data.code === 0 && response.data.data) {
-      spaces.value = response.data.data.records
+    if (response.code === 0 && response.data.records) {
+      spaces.value = response.data.records
           .sort((a, b) => (a.sort || 0) - (b.sort || 0))
           .map((space: SpaceResp) => ({
             title: space.name,

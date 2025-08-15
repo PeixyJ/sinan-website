@@ -46,86 +46,86 @@ const data = {
   navMain: [
     {
       title: "Playground",
-      url: "#",
+      url: "/playground",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
           title: "History",
-          url: "#",
+          url: "/playground/history",
         },
         {
           title: "Starred",
-          url: "#",
+          url: "/playground/starred",
         },
         {
           title: "Settings",
-          url: "#",
+          url: "/playground/settings",
         },
       ],
     },
     {
       title: "Models",
-      url: "#",
+      url: "/models",
       icon: Bot,
       items: [
         {
           title: "Genesis",
-          url: "#",
+          url: "/models/genesis",
         },
         {
           title: "Explorer",
-          url: "#",
+          url: "/models/explorer",
         },
         {
           title: "Quantum",
-          url: "#",
+          url: "/models/quantum",
         },
       ],
     },
     {
       title: "Documentation",
-      url: "#",
+      url: "/docs",
       icon: BookOpen,
       items: [
         {
           title: "Introduction",
-          url: "#",
+          url: "/docs/introduction",
         },
         {
           title: "Get Started",
-          url: "#",
+          url: "/docs/get-started",
         },
         {
           title: "Tutorials",
-          url: "#",
+          url: "/docs/tutorials",
         },
         {
           title: "Changelog",
-          url: "#",
+          url: "/docs/changelog",
         },
       ],
     },
     {
       title: "Settings",
-      url: "#",
+      url: "/settings",
       icon: Settings2,
       items: [
         {
           title: "General",
-          url: "#",
+          url: "/settings/general",
         },
         {
           title: "Team",
-          url: "#",
+          url: "/settings/team",
         },
         {
           title: "Billing",
-          url: "#",
+          url: "/settings/billing",
         },
         {
           title: "Limits",
-          url: "#",
+          url: "/settings/limits",
         },
       ],
     },
@@ -133,17 +133,17 @@ const data = {
   projects: [
     {
       name: "Design Engineering",
-      url: "#",
+      url: "/projects/design-engineering",
       icon: Frame,
     },
     {
       name: "Sales & Marketing",
-      url: "#",
+      url: "/projects/sales-marketing",
       icon: PieChart,
     },
     {
       name: "Travel",
-      url: "#",
+      url: "/projects/travel",
       icon: Map,
     },
   ],

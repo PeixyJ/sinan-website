@@ -9,6 +9,14 @@ export interface ApiResponse<T = any> {
     messageId: string
 }
 
+export interface Page<T = any> {
+    records: T[],
+    total: number
+    size: number,
+    current: number,
+    pages: number,
+}
+
 // SaToken信息
 export interface SaTokenInfo {
     tokenName: string

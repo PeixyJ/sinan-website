@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import {Bookmark, Frame, Inbox, LayoutGrid} from "lucide-vue-next"
+import { RouterLink } from 'vue-router'
 
 import {
   SidebarGroup,
@@ -17,26 +18,26 @@ import {
     <SidebarMenu>
       <SidebarMenuItem>
         <SidebarMenuButton as-child>
-          <a href="/dashboard">
+          <RouterLink to="/dashboard">
             <component :is="LayoutGrid"/>
             <span>启动台</span>
-          </a>
+          </RouterLink>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton as-child>
-          <a href="/dashboard">
+          <RouterLink to="/inbox">
             <component :is="Inbox"/>
             <span>收件箱</span>
-          </a>
+          </RouterLink>
         </SidebarMenuButton>
       </SidebarMenuItem>
       <SidebarMenuItem>
         <SidebarMenuButton as-child>
-          <a href="/dashboard">
+          <RouterLink to="/bookmarks">
             <component :is="Bookmark"/>
             <span>游离书签</span>
-          </a>
+          </RouterLink>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

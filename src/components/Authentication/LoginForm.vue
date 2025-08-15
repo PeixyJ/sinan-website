@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils"
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import { http } from '@/lib/http'
+import { UserAPI } from '@/services/api'
 
 const props = defineProps<{
   class?: HTMLAttributes["class"]
@@ -30,17 +30,22 @@ const handleLogin = async () => {
 
   loading.value = true
   try {
-    const response = await http.post('/user/doLogin', {
+    console.log('开始登录...')
+    const response = await UserAPI.doLogin({
       email: email.value,
       password: password.value
-    })
+    }) as any
 
-    if (response.data.code === 0 && response.data.data.tokenValue) {
-      setCookie('satoken', response.data.data.tokenValue, 7)
+    console.log('登录响应:', response)
+
+    // response 现在是 ApiResponse<SaTokenInfo>
+    if (response.flag && response.data?.tokenValue) {
+      setCookie('satoken', response.data.tokenValue, 7)
       alert('登录成功')
       window.location.href = '/'
     } else {
-      alert(response.data.message || '登录失败')
+      console.warn('登录失败:', response)
+      alert(response.message || '登录失败')
     }
   } catch (error: any) {
     console.error('登录失败:', error)

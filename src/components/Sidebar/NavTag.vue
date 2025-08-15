@@ -46,8 +46,8 @@ const fetchTags = async () => {
     loading.value = true
     const response = await TagAPI.getAll()
 
-    if (response.data.code === 0 && response.data.data) {
-      tags.value = response.data.data.records.map((tag: TagResp) => ({
+    if (response.code === 0 && response.data) {
+      tags.value = response.data.records.map((tag: TagResp) => ({
         id: tag.id,
         name: tag.name,
         url: `/tag/${tag.id}`,
