@@ -1,15 +1,31 @@
 <script setup lang="ts">
 import {ref, onMounted} from "vue"
 import {useRouter} from "vue-router"
+import {Plus} from "lucide-vue-next"
+
 import {
-  SidebarGroup,
+  SidebarGroup, SidebarGroupAction,
   SidebarGroupLabel,
   SidebarMenu, SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
+  useSidebar,
 } from '@/components/ui/sidebar'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {SpaceAPI} from '@/services/api'
-import type {SpaceResp} from '@/types/api'
+import type {SpaceResp, AddSpaceReq} from '@/types/api'
 import Icon from "@/components/Base/Icon.vue";
 import {Folder, Forward, MoreHorizontal, Trash2} from "lucide-vue-next";
 import {
@@ -33,6 +49,36 @@ interface SpaceItem {
 const spaces = ref<SpaceItem[]>([])
 const loading = ref(true)
 const router = useRouter()
+const { isMobile } = useSidebar()
+
+const dialogOpen = ref(false)
+const newSpace = ref<AddSpaceReq>({
+  name: '',
+  icon: '',
+  description: '',
+  sort: 0
+})
+const isSubmitting = ref(false)
+
+const handleAddSpace = async () => {
+  if (!newSpace.value.name.trim()) {
+    return
+  }
+  
+  try {
+    isSubmitting.value = true
+    const response = await SpaceAPI.create(newSpace.value)
+    if (response.code === 0) {
+      dialogOpen.value = false
+      newSpace.value = { name: '', icon: '', description: '', sort: 0 }
+      await fetchSpaces()
+    }
+  } catch (error) {
+    console.error('创建空间失败:', error)
+  } finally {
+    isSubmitting.value = false
+  }
+}
 
 const fetchSpaces = async () => {
   try {
@@ -64,7 +110,62 @@ onMounted(() => {
 
 <template>
   <SidebarGroup>
-    <SidebarGroupLabel>空间</SidebarGroupLabel>
+    <SidebarGroupLabel>
+      空间
+    </SidebarGroupLabel>
+    <AlertDialog v-model:open="dialogOpen">
+      <AlertDialogTrigger as-child>
+        <SidebarGroupAction title="新增空间">
+          <Plus/> <span class="sr-only">新增空间</span>
+        </SidebarGroupAction>
+      </AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>新增空间</AlertDialogTitle>
+          <AlertDialogDescription>
+            创建一个新的空间来组织您的书签
+          </AlertDialogDescription>
+        </AlertDialogHeader>
+        <div class="space-y-4 py-4">
+          <div class="space-y-2">
+            <Label for="space-name">名称</Label>
+            <Input 
+              id="space-name" 
+              v-model="newSpace.name" 
+              placeholder="输入空间名称"
+              :disabled="isSubmitting"
+            />
+          </div>
+          <div class="space-y-2">
+            <Label for="space-icon">图标</Label>
+            <Input 
+              id="space-icon" 
+              v-model="newSpace.icon" 
+              placeholder="输入图标名称"
+              :disabled="isSubmitting"
+            />
+          </div>
+          <div class="space-y-2">
+            <Label for="space-description">描述</Label>
+            <Input 
+              id="space-description" 
+              v-model="newSpace.description" 
+              placeholder="输入空间描述"
+              :disabled="isSubmitting"
+            />
+          </div>
+        </div>
+        <AlertDialogFooter>
+          <AlertDialogCancel :disabled="isSubmitting">取消</AlertDialogCancel>
+          <AlertDialogAction 
+            @click="handleAddSpace"
+            :disabled="isSubmitting || !newSpace.name.trim()"
+          >
+            {{ isSubmitting ? '创建中...' : '创建' }}
+          </AlertDialogAction>
+        </AlertDialogFooter>
+      </AlertDialogContent>
+    </AlertDialog>
     <SidebarMenu>
       <div v-if="loading" class="px-2 py-1 text-sm text-muted-foreground">
         加载中...
