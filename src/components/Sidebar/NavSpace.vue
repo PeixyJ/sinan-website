@@ -26,7 +26,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import IconPicker from '@/components/Base/IconPicker.vue'
 import {SpaceAPI} from '@/services/api'
-import type {SpaceResp, AddSpaceReq} from '@/types/api'
+import type {SpaceResp, AddSpaceReq, EditSpaceReq} from '@/types/api'
 import Icon from "@/components/Base/Icon.vue";
 import {Folder, Forward, MoreHorizontal, Trash2} from "lucide-vue-next";
 import {
@@ -37,10 +37,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 
 interface SpaceItem {
+  id: string
   title: string
   url: string
   icon?: string  // 修改为 string 类型，因为使用的是图标名称字符串
   isActive?: boolean
+  description?: string
+  sort?: number
   items?: {
     title: string
     url: string
@@ -51,9 +54,21 @@ const spaces = ref<SpaceItem[]>([])
 const loading = ref(true)
 const router = useRouter()
 const { isMobile } = useSidebar()
+const currentPage = ref(1)
+const PAGE_SIZE = 5
+const totalCount = ref(0)
+const hasMore = ref(false)
 
 const dialogOpen = ref(false)
+const editDialogOpen = ref(false)
 const newSpace = ref<AddSpaceReq>({
+  name: '',
+  icon: '',
+  description: '',
+  sort: 0
+})
+const editSpace = ref<EditSpaceReq>({
+  id: '',
   name: '',
   icon: '',
   description: '',
@@ -81,26 +96,82 @@ const handleAddSpace = async () => {
   }
 }
 
-const fetchSpaces = async () => {
+const openEditDialog = (item: SpaceItem) => {
+  editSpace.value = {
+    id: item.id,
+    name: item.title,
+    icon: item.icon || '',
+    description: item.description || '',
+    sort: item.sort || 0
+  }
+  editDialogOpen.value = true
+}
+
+const handleEditSpace = async () => {
+  if (!editSpace.value.name?.trim()) {
+    return
+  }
+  
   try {
-    loading.value = true
-    const response = await SpaceAPI.getAll()
+    isSubmitting.value = true
+    const response = await SpaceAPI.update(editSpace.value)
+    if (response.code === 0) {
+      editDialogOpen.value = false
+      await fetchSpaces()
+    }
+  } catch (error) {
+    console.error('修改空间失败:', error)
+  } finally {
+    isSubmitting.value = false
+  }
+}
+
+const fetchSpaces = async (loadMore = false) => {
+  try {
+    if (!loadMore) {
+      loading.value = true
+      currentPage.value = 1
+      spaces.value = []
+    }
+    
+    const response = await SpaceAPI.getAll({
+      page: currentPage.value,
+      size: PAGE_SIZE
+    })
+    
     if (response.code === 0 && response.data.records) {
-      spaces.value = response.data.records
+      const newSpaces = response.data.records
           .sort((a, b) => (a.sort || 0) - (b.sort || 0))
           .map((space: SpaceResp) => ({
+            id: space.id,
             title: space.name,
             url: `/space/${space.id}`,
             icon: space.icon,
+            description: space.description,
+            sort: space.sort,
             isActive: false,
             items: []
           }))
+      
+      if (loadMore) {
+        spaces.value = [...spaces.value, ...newSpaces]
+      } else {
+        spaces.value = newSpaces
+      }
+      
+      totalCount.value = response.data.total
+      hasMore.value = spaces.value.length < totalCount.value
     }
   } catch (error) {
     console.error('获取空间列表失败:', error)
   } finally {
     loading.value = false
   }
+}
+
+const loadMore = async () => {
+  currentPage.value++
+  await fetchSpaces(true)
 }
 
 
@@ -173,7 +244,7 @@ onMounted(() => {
       <div v-else-if="spaces.length === 0" class="px-2 py-1 text-sm text-muted-foreground">
         暂无空间
       </div>
-      <SidebarMenuItem v-for="item in spaces" :key="item.title">
+      <SidebarMenuItem v-for="item in spaces" :key="item.id">
         <SidebarMenuButton :tooltip="item.title" @click="() => router.push(item.url)">
           <Icon :name="item.icon" v-if="item.icon"/>
           <span>{{ item.title }}</span>
@@ -190,7 +261,7 @@ onMounted(() => {
               :side="isMobile ? 'bottom' : 'right'"
               :align="isMobile ? 'end' : 'start'"
           >
-            <DropdownMenuItem>
+            <DropdownMenuItem @click="openEditDialog(item)">
               <Folder class="text-muted-foreground"/>
               <span>修改空间</span>
             </DropdownMenuItem>
@@ -206,12 +277,64 @@ onMounted(() => {
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
-      <SidebarMenuItem>
-        <SidebarMenuButton class="text-sidebar-foreground/70">
+      <SidebarMenuItem v-if="hasMore">
+        <SidebarMenuButton 
+          class="text-sidebar-foreground/70"
+          @click="loadMore"
+        >
           <MoreHorizontal class="text-sidebar-foreground/70"/>
           <span>更多</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>
   </SidebarGroup>
+  
+  <!-- 编辑空间对话框 -->
+  <AlertDialog v-model:open="editDialogOpen">
+    <AlertDialogContent>
+      <AlertDialogHeader>
+        <AlertDialogTitle>编辑空间</AlertDialogTitle>
+        <AlertDialogDescription>
+          修改空间的信息
+        </AlertDialogDescription>
+      </AlertDialogHeader>
+      <div class="space-y-4 py-4">
+        <div class="space-y-2">
+          <Label for="edit-space-name">名称</Label>
+          <Input 
+            id="edit-space-name" 
+            v-model="editSpace.name" 
+            placeholder="输入空间名称"
+            :disabled="isSubmitting"
+          />
+        </div>
+        <div class="space-y-2">
+          <Label for="edit-space-icon">图标</Label>
+          <IconPicker
+            v-model="editSpace.icon"
+            placeholder="选择图标"
+            :disabled="isSubmitting"
+          />
+        </div>
+        <div class="space-y-2">
+          <Label for="edit-space-description">描述</Label>
+          <Input 
+            id="edit-space-description" 
+            v-model="editSpace.description" 
+            placeholder="输入空间描述"
+            :disabled="isSubmitting"
+          />
+        </div>
+      </div>
+      <AlertDialogFooter>
+        <AlertDialogCancel :disabled="isSubmitting">取消</AlertDialogCancel>
+        <AlertDialogAction 
+          @click="handleEditSpace"
+          :disabled="isSubmitting || !editSpace.name?.trim()"
+        >
+          {{ isSubmitting ? '保存中...' : '保存' }}
+        </AlertDialogAction>
+      </AlertDialogFooter>
+    </AlertDialogContent>
+  </AlertDialog>
 </template>

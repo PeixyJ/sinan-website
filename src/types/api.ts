@@ -200,10 +200,14 @@ export interface BookmarkQueryParams {
 }
 
 export interface SpaceQueryParams {
+    page?: number
+    size?: number
     search?: string
 }
 
 export interface TagQueryParams {
+    page?: number
+    size?: number
     search?: string
 }
 

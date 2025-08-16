@@ -43,22 +43,9 @@
         </div>
 
         <!-- 空间选择 -->
-        <div class="grid gap-2" v-if="spaces.length > 0">
+        <div class="grid gap-2">
           <Label for="space">空间</Label>
-          <Select v-model="form.namespaceId">
-            <SelectTrigger class="w-full">
-              <SelectValue placeholder="选择空间（可选）"/>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem
-                  v-for="space in spaces"
-                  :key="space.id"
-                  :value="space.id"
-              >
-                {{ space.name }}
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          <SpaceSelector v-model="form.namespaceId" />
         </div>
 
         <!-- 标签选择 -->
@@ -151,8 +138,9 @@ import {
 } from '@/components/ui/select'
 import {Input} from '@/components/ui/input'
 import {Label} from '@/components/ui/label'
-import {BookmarkAPI, SpaceAPI, TagAPI} from '@/services/api'
-import type {AddBookmarkReq, SpaceResp, TagResp} from '@/types/api'
+import SpaceSelector from './SpaceSelector.vue'
+import {BookmarkAPI, TagAPI} from '@/services/api'
+import type {AddBookmarkReq, TagResp} from '@/types/api'
 
 // Props
 interface Props {
@@ -174,7 +162,6 @@ const emit = defineEmits<Emits>()
 // 响应式数据
 const isOpen = ref(props.open)
 const isSubmitting = ref(false)
-const spaces = ref<SpaceResp[]>([])
 const tags = ref<TagResp[]>([])
 const selectedTags = ref<string[]>([])
 const selectedTagToAdd = ref<string>('')
@@ -193,7 +180,6 @@ watch(() => props.open, (newValue) => {
   isOpen.value = newValue
   if (newValue) {
     // 每次打开时重新获取数据
-    fetchSpaces()
     fetchTags()
     // 如果有默认空间ID，设置它
     if (props.defaultSpaceId) {
@@ -259,18 +245,6 @@ const resetForm = () => {
   }
   selectedTags.value = []
   selectedTagToAdd.value = ''
-}
-
-// 获取空间列表
-const fetchSpaces = async () => {
-  try {
-    const response = await SpaceAPI.getAll() as any
-    if (response?.code === 0 && response?.data) {
-      spaces.value = response.data.records || []
-    }
-  } catch (error) {
-    console.error('Failed to fetch spaces:', error)
-  }
 }
 
 // 获取标签列表
