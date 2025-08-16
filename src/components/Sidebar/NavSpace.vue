@@ -209,7 +209,7 @@ onMounted(() => {
       <SidebarMenuItem>
         <SidebarMenuButton class="text-sidebar-foreground/70">
           <MoreHorizontal class="text-sidebar-foreground/70"/>
-          <span>More</span>
+          <span>更多</span>
         </SidebarMenuButton>
       </SidebarMenuItem>
     </SidebarMenu>

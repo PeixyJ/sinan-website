@@ -57,7 +57,7 @@ const { isMobile } = useSidebar()
 const dialogOpen = ref(false)
 const newTag = ref<AddTagReq>({
   name: '',
-  color: '#3B82F6',
+  color: '#52525b',
   description: ''
 })
 const isSubmitting = ref(false)
@@ -72,7 +72,7 @@ const handleAddTag = async () => {
     const response = await TagAPI.create(newTag.value)
     if (response.code === 0) {
       dialogOpen.value = false
-      newTag.value = { name: '', color: '#3B82F6', description: '' }
+      newTag.value = { name: '', color: '#52525b', description: '' }
       await fetchTags()
     }
   } catch (error) {
@@ -135,20 +135,39 @@ onMounted(() => {
             />
           </div>
           <div class="space-y-2">
-            <Label for="tag-color">标签颜色</Label>
+            <Label>标签颜色</Label>
             <div class="flex items-center gap-2">
-              <Input 
-                id="tag-color" 
-                type="color"
-                v-model="newTag.color" 
-                class="w-20 h-10"
+              <button
+                v-for="color in ['#52525b', '#e11d48', '#22c55e', '#3b82f6', '#facc15']"
+                :key="color"
+                @click="newTag.color = color"
+                type="button"
+                class="w-8 h-8 rounded-full border-2 transition-all"
+                :class="newTag.color === color ? 'border-gray-900 dark:border-gray-100 scale-110' : 'border-transparent'"
+                :style="{ backgroundColor: color }"
                 :disabled="isSubmitting"
               />
-              <Input 
-                v-model="newTag.color" 
-                placeholder="#3B82F6"
-                :disabled="isSubmitting"
-              />
+              <div class="relative">
+                <input
+                  type="color"
+                  v-model="newTag.color"
+                  class="w-8 h-8 rounded-full cursor-pointer opacity-0 absolute inset-0"
+                  :disabled="isSubmitting"
+                />
+                <div 
+                  class="w-8 h-8 rounded-full border-2 transition-all pointer-events-none overflow-hidden"
+                  :class="!['#52525b', '#e11d48', '#22c55e', '#3b82f6', '#facc15'].includes(newTag.color) ? 'border-gray-900 dark:border-gray-100 scale-110' : 'border-transparent'"
+                >
+                  <div 
+                    class="w-full h-full"
+                    :style="{ 
+                      background: !['#52525b', '#e11d48', '#22c55e', '#3b82f6', '#facc15'].includes(newTag.color) 
+                        ? newTag.color 
+                        : 'conic-gradient(from 0deg, #ef4444, #f59e0b, #eab308, #84cc16, #22c55e, #06b6d4, #3b82f6, #8b5cf6, #ec4899, #ef4444)'
+                    }"
+                  />
+                </div>
+              </div>
             </div>
           </div>
           <div class="space-y-2">
