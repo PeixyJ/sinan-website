@@ -1,14 +1,5 @@
 <template>
   <div class="flex flex-1 flex-col gap-4 p-4 pt-0">
-    <!-- 面包屑导航 -->
-    <div class="flex items-center gap-2 text-sm text-muted-foreground">
-      <router-link to="/dashboard" class="hover:text-foreground">Home</router-link>
-      <span>/</span>
-      <span>Tags</span>
-      <span>/</span>
-      <span>{{ currentTag?.name || 'Tag' }}</span>
-    </div>
-
     <!-- 标签标题和描述 -->
     <div class="mb-4">
       <div class="flex items-center gap-3 mb-2">
