@@ -24,6 +24,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import IconPicker from '@/components/Base/IconPicker.vue'
 import {SpaceAPI} from '@/services/api'
 import type {SpaceResp, AddSpaceReq} from '@/types/api'
 import Icon from "@/components/Base/Icon.vue";
@@ -138,10 +139,9 @@ onMounted(() => {
           </div>
           <div class="space-y-2">
             <Label for="space-icon">图标</Label>
-            <Input 
-              id="space-icon" 
-              v-model="newSpace.icon" 
-              placeholder="输入图标名称"
+            <IconPicker
+              v-model="newSpace.icon"
+              placeholder="选择图标"
               :disabled="isSubmitting"
             />
           </div>
