@@ -1,29 +1,34 @@
 <template>
-  <Popover v-model:open="open">
-    <PopoverTrigger as-child>
-      <Button
-        variant="outline"
-        role="combobox"
-        :aria-expanded="open"
-        class="w-full justify-between"
+  <div ref="containerRef" class="w-full">
+    <Popover v-model:open="open">
+      <PopoverTrigger as-child>
+        <Button
+          variant="outline"
+          role="combobox"
+          :aria-expanded="open"
+          class="w-full justify-between"
+        >
+          <span v-if="selectedSpace" class="flex items-center">
+            <Icon v-if="selectedSpace.icon" :name="selectedSpace.icon" class="mr-2 h-4 w-4" />
+            {{ selectedSpace.name }}
+          </span>
+          <span v-else class="text-muted-foreground">选择空间（可选）</span>
+          <ChevronsUpDown class="ml-auto h-4 w-4 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent 
+        class="p-0" 
+        align="start"
+        :style="{ width: contentWidth }"
       >
-        <span v-if="selectedSpace">
-          <Icon v-if="selectedSpace.icon" :name="selectedSpace.icon" class="mr-2 h-4 w-4" />
-          {{ selectedSpace.name }}
-        </span>
-        <span v-else class="text-muted-foreground">选择空间（可选）</span>
-        <ChevronsUpDown class="ml-auto h-4 w-4 shrink-0 opacity-50" />
-      </Button>
-    </PopoverTrigger>
-    <PopoverContent class="w-full p-0">
-      <div class="flex flex-col max-h-[300px]">
+        <div class="flex flex-col max-h-[300px]">
         <!-- 搜索框 -->
         <div class="flex items-center border-b px-3 pb-2 pt-3">
           <Search class="mr-2 h-4 w-4 shrink-0 opacity-50" />
           <Input
             v-model="searchQuery"
             placeholder="搜索空间..."
-            class="h-8 w-full border-0 bg-transparent p-0 text-sm outline-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0"
+            class="h-8 w-full border-0 bg-transparent p-0 text-sm outline-none placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-0 px-2"
             @input="handleSearch"
           />
         </div>
@@ -75,10 +80,11 @@
       </div>
     </PopoverContent>
   </Popover>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, nextTick } from 'vue'
 import { Check, ChevronsUpDown, Search, MoreHorizontal, X } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -101,6 +107,8 @@ const emit = defineEmits<{
   'update:modelValue': [value: string | undefined]
 }>()
 
+const containerRef = ref<HTMLElement>()
+const contentWidth = ref('100%')
 const open = ref(false)
 const spaces = ref<SpaceResp[]>([])
 const loading = ref(false)
@@ -167,10 +175,18 @@ const clearSelection = () => {
   open.value = false
 }
 
-// 监听打开状态，首次打开时加载数据
-watch(open, (newValue) => {
-  if (newValue && spaces.value.length === 0) {
-    fetchSpaces(true)
+// 监听打开状态，首次打开时加载数据并更新宽度
+watch(open, async (newValue) => {
+  if (newValue) {
+    // 更新宽度
+    await nextTick()
+    if (containerRef.value) {
+      contentWidth.value = `${containerRef.value.offsetWidth}px`
+    }
+    // 加载数据
+    if (spaces.value.length === 0) {
+      fetchSpaces(true)
+    }
   }
 })
 
