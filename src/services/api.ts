@@ -39,6 +39,12 @@ export class UserAPI {
 
 // 书签相关API
 export class BookmarkAPI {
+
+    // 获取最常使用的书签
+    static getBookmarkById(id: String) {
+        return http.get<BookmarkResp[]>(`/bookmark/${id}`, {params: {id}})
+    }
+
     // 获取最常使用的书签
     static getMostVisited(params: BookmarkQueryParams) {
         return http.get<BookmarkResp[]>('/bookmark/most-visited', {params})

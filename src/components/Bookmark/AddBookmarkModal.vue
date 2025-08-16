@@ -62,7 +62,7 @@
         </div>
 
         <!-- 标签选择 -->
-        <div class="grid gap-2" v-if="selectedTags.length > 0">
+        <div class="grid gap-2">
           <Label>标签</Label>
           <div class="space-y-2">
             <!-- 已选标签显示 -->
@@ -157,6 +157,8 @@ import type {AddBookmarkReq, SpaceResp, TagResp} from '@/types/api'
 // Props
 interface Props {
   open: boolean
+  defaultSpaceId?: string
+  defaultTagIds?: string[]
 }
 
 // Emits
@@ -193,6 +195,14 @@ watch(() => props.open, (newValue) => {
     // 每次打开时重新获取数据
     fetchSpaces()
     fetchTags()
+    // 如果有默认空间ID，设置它
+    if (props.defaultSpaceId) {
+      form.value.namespaceId = props.defaultSpaceId
+    }
+    // 如果有默认标签IDs，设置它们
+    if (props.defaultTagIds && props.defaultTagIds.length > 0) {
+      selectedTags.value = [...props.defaultTagIds]
+    }
   }
 })
 
@@ -255,8 +265,8 @@ const resetForm = () => {
 const fetchSpaces = async () => {
   try {
     const response = await SpaceAPI.getAll() as any
-    if (response?.flag) {
-      spaces.value = response.data?.records || []
+    if (response?.code === 0 && response?.data) {
+      spaces.value = response.data.records || []
     }
   } catch (error) {
     console.error('Failed to fetch spaces:', error)
@@ -267,8 +277,8 @@ const fetchSpaces = async () => {
 const fetchTags = async () => {
   try {
     const response = await TagAPI.getAll() as any
-    if (response?.flag) {
-      tags.value = response.data?.records || []
+    if (response?.code === 0 && response?.data) {
+      tags.value = response.data.records || []
     }
   } catch (error) {
     console.error('Failed to fetch tags:', error)

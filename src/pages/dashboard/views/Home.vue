@@ -63,39 +63,14 @@
             </div>
           </ContextMenuTrigger>
           <ContextMenuContent class="w-64">
-            <ContextMenuItem @click="editBookmark(bookmark)">
-              <Edit class="mr-2 h-4 w-4" />
-              编辑书签
+            <ContextMenuItem @click="editBookmark(bookmark)" class="flex items-center">
+              <Edit class="mr-2 h-4 w-4 text-muted-foreground" />
+              <span>编辑书签</span>
             </ContextMenuItem>
-            <ContextMenuSub>
-              <ContextMenuSubTrigger>
-                <Tag class="mr-2 h-4 w-4" />
-                选择标签
-              </ContextMenuSubTrigger>
-              <ContextMenuSubContent class="w-48">
-                <ContextMenuCheckboxItem
-                  v-for="tag in availableTags"
-                  :key="tag.id"
-                  :checked="isTagSelected(bookmark, tag.id)"
-                  @click="toggleBookmarkTag(bookmark, tag.id)"
-                >
-                  <div class="flex items-center gap-2">
-                    <div 
-                      class="h-3 w-3 rounded-full" 
-                      :style="{ backgroundColor: tag.color || '#52525b' }"
-                    />
-                    {{ tag.name }}
-                  </div>
-                </ContextMenuCheckboxItem>
-                <div v-if="availableTags.length === 0" class="px-2 py-1.5 text-sm text-muted-foreground">
-                  暂无可用标签
-                </div>
-              </ContextMenuSubContent>
-            </ContextMenuSub>
             <ContextMenuSeparator />
-            <ContextMenuItem @click="deleteBookmark(bookmark.id)" class="text-red-600">
+            <ContextMenuItem @click="deleteBookmark(bookmark.id)" class="flex items-center text-red-600">
               <Trash2 class="mr-2 h-4 w-4" />
-              删除书签
+              <span>删除书签</span>
             </ContextMenuItem>
           </ContextMenuContent>
         </ContextMenu>
@@ -222,6 +197,13 @@
       v-model:open="showAddBookmarkModal"
       @success="handleBookmarkAdded"
     />
+    
+    <!-- 编辑书签弹窗 -->
+    <EditBookmarkDialog
+      v-model:open="showEditDialog"
+      :bookmark="editingBookmark"
+      @success="handleBookmarkUpdated"
+    />
   </div>
 </template>
 
@@ -230,6 +212,7 @@ import { ref, onMounted } from 'vue'
 import { BookmarkAPI, ReceivedBookmarkAPI, TagAPI } from '@/services/api'
 import type { BookmarkResp, ReceivedBookmarkResp, TagResp } from '@/types/api'
 import AddBookmarkModal from '@/components/Bookmark/AddBookmarkModal.vue'
+import EditBookmarkDialog from '@/components/Bookmark/EditBookmarkDialog.vue'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -239,9 +222,8 @@ import {
   ContextMenuSubContent,
   ContextMenuSubTrigger,
   ContextMenuTrigger,
-  ContextMenuCheckboxItem,
 } from '@/components/ui/context-menu'
-import { Edit, Trash2, Tag } from 'lucide-vue-next'
+import { Edit, Trash2, Tag, Check } from 'lucide-vue-next'
 
 // 响应式数据
 const mostVisitedBookmarks = ref<BookmarkResp[]>([])
@@ -249,6 +231,7 @@ const receivedBookmarks = ref<ReceivedBookmarkResp[]>([])
 const searchQuery = ref('')
 const loading = ref(false)
 const showAddBookmarkModal = ref(false)
+const showEditDialog = ref(false)
 const availableTags = ref<TagResp[]>([])
 const editingBookmark = ref<BookmarkResp | null>(null)
 
@@ -334,6 +317,13 @@ const handleBookmarkAdded = () => {
   fetchMostVisited()
 }
 
+// 处理书签更新成功
+const handleBookmarkUpdated = () => {
+  // 重新获取最常访问的书签以显示更新后的书签
+  fetchMostVisited()
+  editingBookmark.value = null
+}
+
 // 获取所有标签
 const fetchTags = async () => {
   try {
@@ -347,10 +337,19 @@ const fetchTags = async () => {
 }
 
 // 编辑书签
-const editBookmark = (bookmark: BookmarkResp) => {
-  editingBookmark.value = bookmark
-  // TODO: 打开编辑对话框
-  console.log('Edit bookmark:', bookmark)
+const editBookmark = async (bookmark: BookmarkResp) => {
+  try {
+    // 获取完整的书签信息，包含所有标签
+    const response = await BookmarkAPI.getBookmarkById(bookmark.id) as any
+    if (response?.flag && response?.data) {
+      editingBookmark.value = response.data
+      showEditDialog.value = true
+    } else {
+      console.error('Failed to fetch bookmark details')
+    }
+  } catch (error) {
+    console.error('Failed to fetch bookmark for editing:', error)
+  }
 }
 
 // 删除书签
@@ -376,7 +375,11 @@ const isTagSelected = (bookmark: BookmarkResp, tagId: string): boolean => {
 // 切换书签标签
 const toggleBookmarkTag = async (bookmark: BookmarkResp, tagId: string) => {
   try {
-    const currentTagIds = bookmark.tags?.map(t => t.id) || []
+    // 过滤掉可能的 null 或 undefined 标签ID
+    const currentTagIds = bookmark.tags
+      ?.map(t => t.id)
+      ?.filter(id => id != null && id !== '') || []
+    
     let newTagIds: string[]
     
     if (currentTagIds.includes(tagId)) {
@@ -389,10 +392,10 @@ const toggleBookmarkTag = async (bookmark: BookmarkResp, tagId: string) => {
     
     const response = await BookmarkAPI.update({
       id: bookmark.id,
-      tags: newTagIds
+      tags: newTagIds.length > 0 ? newTagIds : undefined
     }) as any
     
-    if (response?.flag) {
+    if (response?.flag || response?.code === 0) {
       // 更新本地数据
       await fetchMostVisited()
     }
