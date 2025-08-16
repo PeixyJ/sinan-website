@@ -62,7 +62,7 @@
         </div>
 
         <!-- 标签选择 -->
-        <div class="grid gap-2">
+        <div class="grid gap-2" v-if="selectedTags.length > 0">
           <Label>标签</Label>
           <div class="space-y-2">
             <!-- 已选标签显示 -->
@@ -70,8 +70,12 @@
               <div
                 v-for="tagId in selectedTags"
                 :key="tagId"
-                class="inline-flex items-center gap-1 px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded-md"
+                class="inline-flex items-center gap-2 px-2 py-1 text-xs bg-secondary text-secondary-foreground rounded-md"
               >
+                <div 
+                  class="w-2 h-2 rounded-full"
+                  :style="{ backgroundColor: getTagColor(tagId) }"
+                ></div>
                 <span>{{ getTagName(tagId) }}</span>
                 <button
                   @click="removeTag(tagId)"
@@ -86,7 +90,7 @@
             </div>
             
             <!-- 标签选择下拉框 -->
-            <Select v-model="selectedTagToAdd" @update:model-value="addTag">
+            <Select v-model="selectedTagToAdd" @update:model-value="handleTagSelect">
               <SelectTrigger class="w-full">
                 <SelectValue placeholder="选择或搜索标签..." />
               </SelectTrigger>
@@ -96,7 +100,13 @@
                   :key="tag.id"
                   :value="tag.id"
                 >
-                  {{ tag.name }}
+                  <div class="flex items-center gap-2">
+                    <div 
+                      class="w-2 h-2 rounded-full"
+                      :style="{ backgroundColor: getTagColor(tag.id) }"
+                    ></div>
+                    <span>{{ tag.name }}</span>
+                  </div>
                 </SelectItem>
               </SelectContent>
             </Select>
@@ -121,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref, watch, onMounted, computed} from 'vue'
+import {ref, watch, computed} from 'vue'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -179,6 +189,11 @@ const form = ref<AddBookmarkReq>({
 // 监听 open 属性变化
 watch(() => props.open, (newValue) => {
   isOpen.value = newValue
+  if (newValue) {
+    // 每次打开时重新获取数据
+    fetchSpaces()
+    fetchTags()
+  }
 })
 
 // 监听内部 open 状态变化
@@ -200,8 +215,15 @@ const getTagName = (tagId: string) => {
   return tag ? tag.name : tagId
 }
 
-// 添加标签
-const addTag = (tagId: string) => {
+// 获取标签颜色
+const getTagColor = (tagId: string) => {
+  const tag = tags.value.find(t => t.id === tagId)
+  return tag?.color || '#6b7280' // 默认灰色
+}
+
+// 处理标签选择
+const handleTagSelect = (value: any) => {
+  const tagId = value as string
   if (tagId && !selectedTags.value.includes(tagId)) {
     selectedTags.value.push(tagId)
   }
@@ -293,9 +315,5 @@ const handleCancel = () => {
   isOpen.value = false
 }
 
-// 组件挂载时获取数据
-onMounted(() => {
-  fetchSpaces()
-  fetchTags()
-})
+// 注释：不再在组件挂载时获取数据，改为在模态框打开时获取
 </script>
