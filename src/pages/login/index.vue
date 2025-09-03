@@ -6,6 +6,7 @@ export const description = "A two column login page with a cover image."
 import { ref } from 'vue'
 import LoginForm from "@/components/Authentication/LoginForm.vue";
 import RegisterForm from "@/components/Authentication/RegisterForm.vue";
+import DarkModeToggle from '@/components/DarkModeToggle.vue'
 
 const isLogin = ref(true)
 
@@ -17,13 +18,14 @@ const toggleForm = () => {
 <template>
   <div class="grid min-h-svh lg:grid-cols-2">
     <div class="flex flex-col gap-4 p-6 md:p-10">
-      <div class="flex justify-center gap-2 md:justify-start">
+      <div class="flex justify-between items-center">
         <a href="#" class="flex items-center gap-2 font-medium">
           <div class="flex h-6 w-6 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <img src="/icon.png" alt="This is a Logo">
           </div>
           Sinan
         </a>
+        <DarkModeToggle />
       </div>
       <div class="flex flex-1 items-center justify-center">
         <div class="w-full max-w-xs">

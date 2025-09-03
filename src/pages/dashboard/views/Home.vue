@@ -56,20 +56,29 @@
               ]"
             >
               <div class="flex h-8 w-8 items-center justify-center rounded-md bg-muted overflow-hidden">
-                <template v-if="isBase64Icon(bookmark.icon)">
-                  <img
-                      :src="String(bookmark.icon)"
-                      :alt="bookmark.name"
-                      class="h-full w-full object-cover"
-                      @error="($event.target as HTMLImageElement)?.style && (($event.target as HTMLImageElement).style.display = 'none')"
-                  />
-                </template>
-                <template v-else>
-                  <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                    <path
-                        d="M9 3v2H7c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h10c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2h-2V3H9zm2 2h2v2h-2V5z"/>
-                  </svg>
-                </template>
+                <!-- 优先使用存储的base64图标 -->
+                <img
+                    v-if="isBase64Icon(bookmark.icon)"
+                    :src="String(bookmark.icon)"
+                    :alt="bookmark.name"
+                    class="h-full w-full object-cover"
+                    @error="(e) => (e.target as HTMLImageElement).src = '/icon.png'"
+                />
+                <!-- 其次使用Google Favicon服务，失败时降级到项目Logo -->
+                <img
+                    v-else-if="getFaviconUrl(bookmark.url)"
+                    :src="getFaviconUrl(bookmark.url)"
+                    :alt="bookmark.name"
+                    class="h-full w-full object-cover"
+                    @error="(e) => (e.target as HTMLImageElement).src = '/icon.png'"
+                />
+                <!-- 默认使用项目Logo -->
+                <img
+                    v-else
+                    src="/icon.png"
+                    :alt="bookmark.name"
+                    class="h-full w-full object-cover"
+                />
               </div>
               <div class="flex-1 min-w-0">
                 <p class="text-sm font-medium truncate">{{ bookmark.name }}</p>
@@ -286,6 +295,18 @@ const debounceSearch = (query: string) => {
 watch(searchQuery, (newQuery) => {
   debounceSearch(newQuery)
 }, {immediate: false})
+
+// 获取网站的favicon URL
+const getFaviconUrl = (url: string): string => {
+  try {
+    const urlObj = new URL(url)
+    const domain = urlObj.hostname
+    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
+  } catch (error) {
+    // URL解析失败，返回空字符串
+    return ''
+  }
+}
 
 // 判断图标是否为base64格式
 const isBase64Icon = (icon: number | string): boolean => {

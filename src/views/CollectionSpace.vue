@@ -5,6 +5,7 @@ import { ShareAPI } from '@/services/api'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { ArrowLeft, Key, Share2 } from 'lucide-vue-next'
+import DarkModeToggle from '@/components/DarkModeToggle.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -69,19 +70,22 @@ onMounted(() => {
     <!-- 页面头部 -->
     <div class="border-b bg-card">
       <div class="container mx-auto px-4 py-4">
-        <div class="flex items-center gap-3">
-          <Button 
-            @click="handleCancel" 
-            variant="ghost" 
-            size="sm"
-            class="p-2"
-          >
-            <ArrowLeft class="w-4 h-4" />
-          </Button>
-          <div>
-            <h1 class="text-xl font-semibold">收藏空间</h1>
-            <p class="text-sm text-muted-foreground">确认收藏此分享的空间</p>
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <Button 
+              @click="handleCancel" 
+              variant="ghost" 
+              size="sm"
+              class="p-2"
+            >
+              <ArrowLeft class="w-4 h-4" />
+            </Button>
+            <div>
+              <h1 class="text-xl font-semibold">收藏空间</h1>
+              <p class="text-sm text-muted-foreground">确认收藏此分享的空间</p>
+            </div>
           </div>
+          <DarkModeToggle />
         </div>
       </div>
     </div>

@@ -25,6 +25,7 @@ import {
 } from "@/components/ui/sidebar"
 import { SpaceAPI, TagAPI } from '@/services/api'
 import type { SpaceResp, TagResp } from '@/types/api'
+import DarkModeToggle from '@/components/DarkModeToggle.vue'
 
 const route = useRoute()
 
@@ -94,22 +95,25 @@ const breadcrumbTitle = computed(() => {
     <AppSidebar />
     <SidebarInset>
       <header class="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
-        <div class="flex items-center gap-2 px-4">
-          <SidebarTrigger class="-ml-1" />
-          <Separator orientation="vertical" class="mr-2 h-4" />
-          <Breadcrumb>
-            <BreadcrumbList>
-              <BreadcrumbItem class="hidden md:block">
-                <BreadcrumbLink href="/">
-                  Sinan
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbSeparator class="hidden md:block" />
-              <BreadcrumbItem>
-                <BreadcrumbPage>{{ breadcrumbTitle }}</BreadcrumbPage>
-              </BreadcrumbItem>
-            </BreadcrumbList>
-          </Breadcrumb>
+        <div class="flex items-center justify-between w-full px-4">
+          <div class="flex items-center gap-2">
+            <SidebarTrigger class="-ml-1" />
+            <Separator orientation="vertical" class="mr-2 h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem class="hidden md:block">
+                  <BreadcrumbLink href="/">
+                    Sinan
+                  </BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator class="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>{{ breadcrumbTitle }}</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+          <DarkModeToggle />
         </div>
       </header>
       <router-view />
