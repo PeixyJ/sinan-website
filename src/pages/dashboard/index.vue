@@ -26,6 +26,8 @@ import {
 import { SpaceAPI, TagAPI } from '@/services/api'
 import type { SpaceResp, TagResp } from '@/types/api'
 import DarkModeToggle from '@/components/DarkModeToggle.vue'
+import { Button } from '@/components/ui/button'
+import { BookOpen } from 'lucide-vue-next'
 
 const route = useRoute()
 
@@ -88,6 +90,11 @@ const breadcrumbTitle = computed(() => {
   }
   return routeNameMap[route.name as string] || '页面'
 })
+
+// 打开文档页面
+const openDocs = () => {
+  window.open('https://sinan.host/docs/', '_blank')
+}
 </script>
 
 <template>
@@ -113,7 +120,19 @@ const breadcrumbTitle = computed(() => {
               </BreadcrumbList>
             </Breadcrumb>
           </div>
-          <DarkModeToggle />
+          <div class="flex items-center gap-1">
+            <Button
+              @click="openDocs"
+              variant="ghost"
+              size="icon"
+              class="relative"
+              title="查看文档"
+            >
+              <BookOpen class="h-5 w-5"/>
+              <span class="sr-only">查看文档</span>
+            </Button>
+            <DarkModeToggle />
+          </div>
         </div>
       </header>
       <router-view />

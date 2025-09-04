@@ -101,6 +101,7 @@ export interface EditBookmarkReq {
     id: string
     name?: string
     url?: string
+    icon?:string
     description?: string
     namespaceId?: string
     tags?: string[]

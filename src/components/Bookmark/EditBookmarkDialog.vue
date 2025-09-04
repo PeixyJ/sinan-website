@@ -33,6 +33,55 @@
           />
         </div>
         <div class="space-y-2">
+          <Label for="edit-icon">图标</Label>
+          <div class="space-y-2">
+            <div class="flex gap-2">
+              <Input
+                id="edit-icon"
+                v-model="formData.icon"
+                placeholder="输入图标 URL 或 base64 数据（可选）"
+                :class="iconValidationClass"
+                class="flex-1"
+              />
+              <Button
+                type="button"
+                variant="outline"
+                @click="triggerFileUpload"
+                :disabled="isUploading"
+                class="flex-shrink-0 h-9 px-3"
+              >
+                <Upload class="h-4 w-4" />
+                {{ isUploading ? '上传中...' : '上传' }}
+              </Button>
+            </div>
+            <input
+              ref="fileInput"
+              type="file"
+              accept="image/*"
+              class="hidden"
+              @change="handleFileUpload"
+            />
+            <div v-if="uploadError" class="text-sm text-red-600">
+              {{ uploadError }}
+            </div>
+            <div v-if="iconValidationMessage" class="text-sm" :class="isIconValid ? 'text-green-600' : 'text-red-600'">
+              {{ iconValidationMessage }}
+            </div>
+            <!-- 图标预览 -->
+            <div v-if="isIconValid && formData.icon" class="flex items-center gap-2">
+              <span class="text-sm text-muted-foreground">预览:</span>
+              <div class="flex h-6 w-6 items-center justify-center rounded bg-muted overflow-hidden">
+                <img
+                  :src="formData.icon"
+                  alt="Icon preview"
+                  class="h-full w-full object-cover"
+                  @error="onIconError"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="space-y-2">
           <Label>所属空间</Label>
           <div class="flex flex-wrap gap-2">
             <div
@@ -110,6 +159,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
+import { Upload } from 'lucide-vue-next'
 import Icon from '@/components/Base/Icon.vue'
 import { BookmarkAPI, TagAPI, SpaceAPI } from '@/services/api'
 import type { BookmarkResp, TagResp, SpaceRespSimple, EditBookmarkReq } from '@/types/api'
@@ -136,6 +186,7 @@ const formData = ref<EditBookmarkReq>({
   name: '',
   url: '',
   description: '',
+  icon: '',
   tags: []
 })
 
@@ -144,6 +195,41 @@ const availableTags = ref<TagResp[]>([])
 const availableSpaces = ref<SpaceRespSimple[]>([])
 const selectedSpaceId = ref<string>('')
 const isSubmitting = ref(false)
+const iconLoadError = ref(false)
+const isUploading = ref(false)
+const uploadError = ref('')
+const fileInput = ref<HTMLInputElement>()
+
+// Icon validation logic
+const isIconValid = computed(() => {
+  if (!formData.value.icon || formData.value.icon.trim() === '') return true // 空值是有效的
+  const icon = formData.value.icon.trim()
+  // 检查是否为 HTTP/HTTPS URL
+  if (icon.startsWith('http://') || icon.startsWith('https://')) return !iconLoadError.value
+  // 检查是否为 base64 图片
+  if (icon.startsWith('data:image/')) return !iconLoadError.value
+  return false
+})
+
+const iconValidationMessage = computed(() => {
+  if (!formData.value.icon || formData.value.icon.trim() === '') return ''
+  const icon = formData.value.icon.trim()
+  
+  if (iconLoadError.value) return '图标加载失败，请检查 URL 或 base64 数据'
+  
+  if (icon.startsWith('http://') || icon.startsWith('https://')) {
+    return '✓ 有效的图标 URL'
+  }
+  if (icon.startsWith('data:image/')) {
+    return '✓ 有效的 base64 图片数据'
+  }
+  return '请输入有效的图标 URL (http/https) 或 base64 图片数据'
+})
+
+const iconValidationClass = computed(() => {
+  if (!formData.value.icon || formData.value.icon.trim() === '') return ''
+  return isIconValid.value ? 'border-green-500' : 'border-red-500'
+})
 
 // 获取所有标签
 const fetchTags = async () => {
@@ -162,6 +248,65 @@ const fetchSpaces = async () => {
     availableSpaces.value = response.data.records || response.data
   } catch (error) {
     console.error('Failed to fetch spaces:', error)
+  }
+}
+
+// 图标加载错误处理
+const onIconError = () => {
+  iconLoadError.value = true
+}
+
+// 监听图标变化，重置错误状态
+watch(() => formData.value.icon, () => {
+  iconLoadError.value = false
+  uploadError.value = ''
+})
+
+// 触发文件上传
+const triggerFileUpload = () => {
+  fileInput.value?.click()
+}
+
+// 处理文件上传
+const handleFileUpload = async (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const file = target.files?.[0]
+  
+  if (!file) return
+  
+  // 验证文件类型
+  if (!file.type.startsWith('image/')) {
+    uploadError.value = '请选择图片文件'
+    return
+  }
+  
+  // 验证文件大小（限制为 5MB）
+  const maxSize = 5 * 1024 * 1024
+  if (file.size > maxSize) {
+    uploadError.value = '图片文件大小不能超过 5MB'
+    return
+  }
+  
+  try {
+    isUploading.value = true
+    uploadError.value = ''
+    
+    const response = await BookmarkAPI.uploadIcon(file)
+    
+    if (response.code === 0 && response.data) {
+      // 上传成功，设置图标 URL
+      formData.value.icon = response.data
+      iconLoadError.value = false
+    } else {
+      uploadError.value = response.message || '上传失败'
+    }
+  } catch (error: any) {
+    console.error('Icon upload failed:', error)
+    uploadError.value = error.response?.data?.message || '上传失败，请稍后重试'
+  } finally {
+    isUploading.value = false
+    // 清除文件选择，允许重复选择同一文件
+    if (target) target.value = ''
   }
 }
 
@@ -190,6 +335,7 @@ const handleSave = async () => {
       name: formData.value.name,
       url: formData.value.url,
       description: formData.value.description || '',
+      icon: formData.value.icon?.trim() || undefined,
       namespaceId: selectedSpaceId.value || undefined,
       tags: validTagIds.length > 0 ? validTagIds : undefined
     }
@@ -230,6 +376,7 @@ watch(() => props.bookmark, (newBookmark) => {
       name: newBookmark.name || '',
       url: newBookmark.url || '',
       description: newBookmark.description || '',
+      icon: String(newBookmark.icon || ''),
       namespaceId: newBookmark.spaceId || '',
       tags: []
     }
@@ -239,6 +386,9 @@ watch(() => props.bookmark, (newBookmark) => {
       ?.filter(id => id != null && id !== '') || []
     // 设置选中的空间
     selectedSpaceId.value = newBookmark.spaceId || ''
+    // 重置图标错误状态
+    iconLoadError.value = false
+    uploadError.value = ''
   }
 }, { immediate: true })
 
