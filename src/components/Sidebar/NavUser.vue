@@ -1617,10 +1617,6 @@ onMounted(() => {
             <div class="md:col-span-2">
               <div v-if="!isEditingName" class="flex items-center gap-3">
                 <span class="text-sm">{{ user?.name }}</span>
-                <!-- <Button variant="ghost" size="sm" @click="startEditingName">
-                  <Edit class="h-3 w-3"/>
-                  编辑
-                </Button> -->
               </div>
               <div v-else class="flex items-center gap-2">
                 <Input
