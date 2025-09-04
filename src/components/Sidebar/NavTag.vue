@@ -331,10 +331,6 @@ onUnmounted(() => {
               <Folder class="text-muted-foreground"/>
               <span>修改标签</span>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Forward class="text-muted-foreground"/>
-              <span>分享标签</span>
-            </DropdownMenuItem>
             <DropdownMenuSeparator/>
             <DropdownMenuItem @click="confirmDeleteTag(item)">
               <Trash2 class="text-muted-foreground"/>
