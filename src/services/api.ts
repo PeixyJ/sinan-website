@@ -166,6 +166,17 @@ export class BookmarkAPI {
         return http.get<BookmarkResp[]>('/bookmark/search', {params})
     }
 
+    // 上传书签图标
+    static uploadIcon(file: File) {
+        const formData = new FormData()
+        formData.append('file', file)
+        return http.post<string>('/bookmark/upload/icon', formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data'
+            }
+        })
+    }
+
     // 新增书签
     static create(data: AddBookmarkReq) {
         return http.post<SnBookmark>('/bookmark', data)

@@ -953,7 +953,7 @@ const registerPasskey = async () => {
     
     // 转换 excludeCredentials 中的 id 字段
     if (options.excludeCredentials && Array.isArray(options.excludeCredentials)) {
-      options.excludeCredentials = options.excludeCredentials.map(cred => ({
+      options.excludeCredentials = options.excludeCredentials.map((cred: any) => ({
         ...cred,
         id: base64UrlToArrayBuffer(cred.id)
       }));
@@ -1612,8 +1612,11 @@ onMounted(() => {
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
             <Label class="text-sm">用户名</Label>
             <div class="md:col-span-2">
-              <div v-if="!isEditingName" class="flex items-center gap-3">
+              <div v-if="!isEditingName" class="flex items-center gap-2">
                 <span class="text-sm">{{ user?.name }}</span>
+                <Button variant="ghost" size="sm" @click="startEditingName">
+                  <Edit class="h-3 w-3"/>
+                </Button>
               </div>
               <div v-else class="flex items-center gap-2">
                 <Input

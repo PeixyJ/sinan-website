@@ -59,9 +59,9 @@
               ]"
           >
             <div class="flex h-8 w-8 items-center justify-center rounded-md bg-muted overflow-hidden">
-              <!-- 优先使用存储的base64图标 -->
+              <!-- 优先使用存储的图标（HTTP URL 或 base64） -->
               <img
-                v-if="isBase64Icon(bookmark.icon)"
+                v-if="isValidIcon(bookmark.icon)"
                 :src="String(bookmark.icon)"
                 :alt="bookmark.name"
                 class="h-full w-full object-cover"
@@ -257,10 +257,14 @@ const getFaviconUrl = (url: string): string => {
   }
 }
 
-// 判断图标是否为base64格式
-const isBase64Icon = (icon: number | string): boolean => {
+// 判断是否为有效的图标（HTTP URL 或 base64）
+const isValidIcon = (icon: number | string): boolean => {
   if (typeof icon !== 'string') return false
-  return icon.startsWith('data:image/') || !!icon.match(/^[A-Za-z0-9+/]+=*$/)
+  // 检查是否为 HTTP/HTTPS URL
+  if (icon.startsWith('http://') || icon.startsWith('https://')) return true
+  // 检查是否为 base64 图片
+  if (icon.startsWith('data:image/')) return true
+  return false
 }
 
 // 过滤后的书签
