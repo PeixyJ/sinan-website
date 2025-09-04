@@ -1617,10 +1617,6 @@ onMounted(() => {
             <div class="md:col-span-2">
               <div v-if="!isEditingName" class="flex items-center gap-3">
                 <span class="text-sm">{{ user?.name }}</span>
-                <Button variant="ghost" size="sm" @click="startEditingName">
-                  <Edit class="h-3 w-3"/>
-                  编辑
-                </Button>
               </div>
               <div v-else class="flex items-center gap-2">
                 <Input
@@ -1675,16 +1671,6 @@ onMounted(() => {
             </div>
             
             <div class="space-y-3">
-              <!-- <div class="space-y-2">
-                <Label for="passkey-name">Passkey名称 *</Label>
-                <Input
-                  id="passkey-name"
-                  v-model="newPasskeyForm.name"
-                  placeholder="请输入Passkey名称"
-                  :disabled="isRegisteringPasskey"
-                />
-              </div> -->
-              
               <div class="space-y-2">
                 <Label for="passkey-description">Passkey描述</Label>
                 <Input
@@ -1732,7 +1718,7 @@ onMounted(() => {
                   <span class="font-medium text-sm">{{ passkey.describe }}</span>
                 </div>
                 <div class="text-xs text-muted-foreground">
-                  {{ new Date(passkey.createTime).toLocaleDateString() }}
+                  {{ new Date(passkey.lastUsed).toLocaleDateString() }}
                 </div>
               </div>
               
