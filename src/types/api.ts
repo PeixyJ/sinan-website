@@ -328,7 +328,7 @@ export interface PasskeyResp {
     id: string
     describe?: string
     createTime: string
-    lastUsed?: string
+    lastUsed: string
 }
 
 export interface ChangePasskeyReq{
