@@ -24,7 +24,7 @@ import type {
     ReceivedBookmarkQueryParams, UserInfo, Page, ImportBookmarkResp, SpaceRespSimple, SpaceDragSortParams,
     TagDragSortParams, UserRegister, UserLoginResp, UserLoginReq, UserKeyResp, CreateUserKeyReq, ChangePasswordReq,
     UpdateShareBookmarkReq, RemoveShareBookmarkReq, SearchCollectionUserReq, GetShareUrl, CollectionUserInfoResp,
-    CollectionSpaceReq
+    CollectionSpaceReq,PasskeyRegistrationReq,ChangePasskeyReq,PasskeyResp
 } from '@/types/api'
 
 export class GithubAPI {
@@ -34,6 +34,44 @@ export class GithubAPI {
 
     static doLogin(code: string) {
         return http.get<UserLoginResp>('/user/github/oauth2/login', {params: {code}})
+    }
+}
+
+export class PasskeyAPI{
+    static getRegistrationOptions() {
+        return http.get<String>('/user/passkey/registration/options')
+    }
+
+    static verifyRegistration(params: PasskeyRegistrationReq) {
+        return http.post<String>('/user/passkey/registration', params)
+    }
+
+    static getAssertionOptions() {
+        return http.get<String>('/user/passkey/login/options')
+    }
+
+    static verifyAssertion(credential: string) {
+        return http.post<UserLoginResp>('/user/passkey/login', credential)
+    }
+
+    // 获取用户的所有Passkey凭证
+    static getPasskeys() {
+        return http.get<PasskeyResp[]>('/user/passkeys')
+    }
+
+    // 更新Passkey描述
+    static updatePasskeyDescription(data: ChangePasskeyReq) {
+        return http.patch<string>(`/user/passkey/describe`, data)
+    }
+
+    // 删除Passkey凭证
+    static deletePasskey(passkeyId: string) {
+        return http.delete<string>(`/user/passkey/${passkeyId}`)
+    }
+
+    // 注册新的Passkey
+    static registerPasskey(name: string, description?: string) {
+        return http.post<PasskeyResp>('/user/passkey/register', { name, description })
     }
 }
 
