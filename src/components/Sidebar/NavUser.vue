@@ -947,8 +947,17 @@ const registerPasskey = async () => {
     options = options.publicKey
     console.info('publicKey:', options);
 
+    // 转换必要的字段为 ArrayBuffer
     options.user.id = base64UrlToArrayBuffer(options.user.id);
     options.challenge = base64UrlToArrayBuffer(options.challenge);
+    
+    // 转换 excludeCredentials 中的 id 字段
+    if (options.excludeCredentials && Array.isArray(options.excludeCredentials)) {
+      options.excludeCredentials = options.excludeCredentials.map(cred => ({
+        ...cred,
+        id: base64UrlToArrayBuffer(cred.id)
+      }));
+    }
     
     // 2. 创建凭证
     const cred = await navigator.credentials.create({
@@ -1042,17 +1051,15 @@ onMounted(() => {
             :side-offset="4"
         >
           <DropdownMenuLabel class="p-0 font-normal">
-            <div class="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
-              <Avatar class="h-8 w-8 rounded-lg">
+            <div class="flex items-center gap-2 px-2 py-2 text-left text-sm">
+              <Avatar class="h-7 w-7 rounded-lg flex-shrink-0">
                 <AvatarImage :src="user.avatar" :alt="user.name"/>
                 <AvatarFallback class="rounded-lg">
                   {{ user.name.slice(0, 2).toUpperCase() }}
                 </AvatarFallback>
               </Avatar>
-              <div class="grid flex-1 text-left text-sm leading-tight">
-                <span class="truncate font-semibold">{{ user.name }}</span>
-                <span class="truncate text-xs">{{ user.email }}</span>
-              </div>
+              <span class="font-semibold">{{ user.name }}</span>
+              <span class="text-xs text-muted-foreground">{{ user.email }}</span>
             </div>
           </DropdownMenuLabel>
           <DropdownMenuSeparator/>
@@ -1479,26 +1486,19 @@ onMounted(() => {
             <div
                 v-for="key in userKeys"
                 :key="key.id"
-                class="border rounded-lg p-3 bg-card space-y-2"
+                class="border rounded-lg p-3 bg-card"
             >
-              <!-- 第一行：名称、描述、ID和创建时间 -->
+              <!-- 单行显示：名称、描述、密钥值、创建时间和删除按钮 -->
               <div class="flex items-center gap-2 text-sm">
-                <h4 class="font-medium truncate">{{ key.keyName || '未命名密钥' }}</h4>
-                <span v-if="key.description" class="text-muted-foreground truncate">
-                  - {{ key.description }}
+                <h4 class="font-medium min-w-[80px]">{{ key.keyName || '未命名密钥' }}</h4>
+                <span v-if="key.description" class="text-muted-foreground flex-1 truncate">
+                  {{ key.description }}
                 </span>
-                <div class="text-xs text-muted-foreground bg-muted px-1.5 py-0.5 rounded text-nowrap ml-auto">
-                  {{ key.id.slice(0, 8) }}...
+                <div class="font-mono text-xs bg-muted px-2 py-1 rounded border max-w-[200px]">
+                  <span class="text-muted-foreground truncate block">{{ key.accessKey }}</span>
                 </div>
                 <div class="text-xs text-muted-foreground text-nowrap">
                   {{ new Date(key.createTime).toLocaleDateString() }}
-                </div>
-              </div>
-
-              <!-- 第二行：密钥值和删除按钮 -->
-              <div class="flex items-center gap-2">
-                <div class="flex-1 font-mono text-xs bg-muted p-2 rounded border">
-                  <span class="text-muted-foreground truncate block">{{ key.accessKey }}</span>
                 </div>
                 <Button
                     variant="destructive"
@@ -1507,10 +1507,7 @@ onMounted(() => {
                     :disabled="isDeletingKey && deletingKeyId === key.id"
                     class="flex-shrink-0"
                 >
-                  <Trash2 class="h-4 w-4"/>
-                  <span class="hidden sm:inline ml-1">
-                    {{ (isDeletingKey && deletingKeyId === key.id) ? '删除中...' : '删除' }}
-                  </span>
+                  <Trash2 class="h-3 w-3"/>
                 </Button>
               </div>
             </div>
@@ -1705,67 +1702,30 @@ onMounted(() => {
           </div>
           
           <!-- Passkey列表 -->
-          <div v-else class="space-y-3 max-h-[300px] overflow-y-auto">
+          <div v-else class="space-y-2 max-h-[300px] overflow-y-auto">
             <div 
               v-for="passkey in userPasskeys" 
               :key="passkey.id"
-              class="border rounded-lg p-4 bg-card space-y-3"
+              class="border rounded-lg p-3 bg-card"
             >
-              <!-- Passkey基本信息 -->
-              <div class="flex items-center justify-between">
-                <div class="flex items-center gap-2">
-                  <Key class="h-4 w-4 text-primary"/>
-                  <span class="font-medium text-sm">{{ passkey.describe }}</span>
+              <!-- 单行显示 Passkey 信息 -->
+              <div v-if="editingPasskeyId !== passkey.id" class="flex items-center gap-2">
+                <Key class="h-4 w-4 text-primary flex-shrink-0"/>
+                <span v-if="passkey.describe" class="text-sm font-medium min-w-[100px]">
+                  {{ passkey.describe }}
+                </span>
+                <span v-else class="text-sm text-muted-foreground italic min-w-[100px]">
+                  暂无描述
+                </span>
+                <div class="text-xs text-muted-foreground flex-1">
+                  ID: {{ passkey.id.slice(0, 12) }}...
                 </div>
                 <div class="text-xs text-muted-foreground">
-                  {{ new Date(passkey.lastUsed).toLocaleDateString() }}
+                  最后使用: {{ new Date(passkey.lastUsed).toLocaleDateString() }}
                 </div>
-              </div>
-              
-              <!-- 描述编辑区域 -->
-              <div class="space-y-2">
-                <div v-if="editingPasskeyId !== passkey.id" class="flex items-center gap-2">
-                  <span v-if="passkey.describe" class="text-sm text-muted-foreground flex-1">
-                    {{ passkey.describe }}
-                  </span>
-                  <span v-else class="text-sm text-muted-foreground italic flex-1">
-                    暂无描述
-                  </span>
-                  <Button variant="ghost" size="sm" @click="startEditingPasskeyDescription(passkey)">
-                    <Edit class="h-3 w-3"/>
-                    编辑
-                  </Button>
-                </div>
-                
-                <div v-else class="flex items-center gap-2">
-                  <Input
-                    v-model="editingPasskeyDescription"
-                    placeholder="请输入描述"
-                    class="flex-1"
-                  />
-                  <Button 
-                    size="sm" 
-                    @click="savePasskeyDescription(passkey.id)"
-                    :disabled="isUpdatingPasskey"
-                  >
-                    {{ isUpdatingPasskey ? '保存中...' : '保存' }}
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    @click="cancelEditingPasskeyDescription"
-                    :disabled="isUpdatingPasskey"
-                  >
-                    取消
-                  </Button>
-                </div>
-              </div>
-              
-              <!-- 操作按钮 -->
-              <div class="flex items-center gap-2 pt-2 border-t">
-                <div class="text-xs text-muted-foreground flex-1">
-                  ID: {{ passkey.id }}
-                </div>
+                <Button variant="ghost" size="sm" @click="startEditingPasskeyDescription(passkey)">
+                  <Edit class="h-3 w-3"/>
+                </Button>
                 <Button
                   variant="destructive"
                   size="sm"
@@ -1773,7 +1733,31 @@ onMounted(() => {
                   :disabled="isDeletingPasskey"
                 >
                   <Trash2 class="h-3 w-3"/>
-                  {{ isDeletingPasskey ? '删除中...' : '删除' }}
+                </Button>
+              </div>
+              
+              <!-- 编辑模式 -->
+              <div v-else class="flex items-center gap-2">
+                <Key class="h-4 w-4 text-primary flex-shrink-0"/>
+                <Input
+                  v-model="editingPasskeyDescription"
+                  placeholder="请输入描述"
+                  class="flex-1 max-w-[200px]"
+                />
+                <Button 
+                  size="sm" 
+                  @click="savePasskeyDescription(passkey.id)"
+                  :disabled="isUpdatingPasskey"
+                >
+                  保存
+                </Button>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  @click="cancelEditingPasskeyDescription"
+                  :disabled="isUpdatingPasskey"
+                >
+                  取消
                 </Button>
               </div>
             </div>
