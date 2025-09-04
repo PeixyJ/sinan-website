@@ -4,7 +4,6 @@ import { useRouter } from "vue-router"
 import { eventBus, EVENTS } from '@/utils/eventBus'
 import {
   Folder,
-  Forward,
   MoreHorizontal,
   Trash2,
   Plus,
