@@ -4,7 +4,6 @@ import { useRouter } from "vue-router"
 import { eventBus, EVENTS } from '@/utils/eventBus'
 import {
   Folder,
-  Forward,
   MoreHorizontal,
   Trash2,
   Plus,
@@ -330,10 +329,6 @@ onUnmounted(() => {
             <DropdownMenuItem @click="openEditDialog(item)">
               <Folder class="text-muted-foreground"/>
               <span>修改标签</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Forward class="text-muted-foreground"/>
-              <span>分享标签</span>
             </DropdownMenuItem>
             <DropdownMenuSeparator/>
             <DropdownMenuItem @click="confirmDeleteTag(item)">

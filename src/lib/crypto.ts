@@ -1,3 +1,4 @@
+import CryptoJS from 'crypto-js'
 /**
  * 密码加密工具类
  * 使用SHA-256进行密码哈希加密
@@ -6,9 +7,9 @@
 /**
  * 将字符串转换为Uint8Array
  */
-function stringToUint8Array(str: string): Uint8Array {
+function stringToArrayBuffer(str: string): ArrayBuffer {
   const encoder = new TextEncoder()
-  return encoder.encode(str)
+  return encoder.encode(str).buffer
 }
 
 /**
@@ -31,14 +32,18 @@ function arrayBufferToHex(buffer: ArrayBuffer): string {
  */
 export async function encryptPassword(password: string): Promise<string> {
   try {
-    // 将密码转换为Uint8Array
-    const data = stringToUint8Array(password)
-    
-    // 使用Web Crypto API的SHA-256算法进行哈希
-    const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-    
-    // 将哈希结果转换为十六进制字符串
-    return arrayBufferToHex(hashBuffer)
+    // 判断是否为安全上下文且 crypto.subtle 可用
+    if (window.isSecureContext && window.crypto?.subtle) {
+      // 将密码转换为Uint8Array
+  const data = stringToArrayBuffer(password)
+      // 使用Web Crypto API的SHA-256算法进行哈希
+      const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+      // 将哈希结果转换为十六进制字符串
+      return arrayBufferToHex(hashBuffer)
+    } else {
+      // 非安全环境，使用 crypto-js
+      return CryptoJS.SHA256(password).toString()
+    }
   } catch (error) {
     console.error('密码加密失败:', error)
     throw new Error('密码加密失败')

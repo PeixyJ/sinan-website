@@ -10,7 +10,7 @@
               :is="getIconComponent(currentSpace.icon)"
               class="h-8 w-8"
             />
-            <h1 class="text-3xl font-bold">{{ currentSpace?.name || '加载中...' }}</h1>
+            <h1 class="text-3xl font-bold">{{ isLoadingSpace ? '加载中...' : (currentSpace?.name || '未知空间') }}</h1>
           </div>
           <p class="text-muted-foreground">{{ currentSpace?.description || '暂无描述' }}</p>
         </div>
@@ -240,6 +240,7 @@ const availableTags = ref<TagResp[]>([])
 const searchQuery = ref('')
 const loading = ref(false)
 const isRefreshing = ref(false)
+const isLoadingSpace = ref(false)
 const showAddBookmarkModal = ref(false)
 const showEditDialog = ref(false)
 const showDeleteDialog = ref(false)
@@ -285,13 +286,43 @@ const getIconComponent = (iconName: string) => {
 
 // 获取空间信息
 const fetchSpaceInfo = async () => {
+  if (!spaceId.value) {
+    console.warn('No space ID provided')
+    return
+  }
+  
+  isLoadingSpace.value = true
+  
   try {
     const response = await SpaceAPI.getById(spaceId.value) as any
-    if (response?.code === 0 && response?.data) {
-      currentSpace.value = response.data
+    console.log('Space API Response:', response) // 调试日志
+    
+    // API 返回格式是 ApiResponse<SpaceResp>
+    // 成功响应检查：code === 0 或 flag === true
+    if (response && (response.code === 0 || response.flag === true)) {
+      if (response.data) {
+        currentSpace.value = response.data
+        console.log('Space info loaded:', currentSpace.value) // 调试日志
+      }
+    } else {
+      console.warn('Failed to fetch space info, response:', response)
     }
   } catch (error) {
     console.error('Failed to fetch space info:', error)
+    // 设置默认值避免一直显示"加载中..."
+    currentSpace.value = {
+      id: spaceId.value,
+      name: '未知空间',
+      description: '无法加载空间信息',
+      icon: '',
+      sort: 0,
+      shared: false,
+      key: '',
+      createTime: '',
+      updateTime: ''
+    } as SpaceResp
+  } finally {
+    isLoadingSpace.value = false
   }
 }
 
@@ -470,15 +501,22 @@ const handleRefresh = async () => {
 }
 
 // 监听路由变化
-watch(spaceId, () => {
-  fetchSpaceInfo()
-  fetchBookmarks()
-})
+watch(spaceId, async (newId, oldId) => {
+  if (newId && newId !== oldId) {
+    // 清除旧数据
+    currentSpace.value = null
+    bookmarks.value = []
+    
+    // 并行加载新数据
+    await Promise.all([
+      fetchSpaceInfo(),
+      fetchBookmarks()
+    ])
+  }
+}, { immediate: true })
 
-// 页面加载时获取数据
+// 页面加载时获取标签数据
 onMounted(() => {
-  fetchSpaceInfo()
-  fetchBookmarks()
   fetchTags()
 })
 </script>
