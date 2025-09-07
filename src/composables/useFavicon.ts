@@ -1,4 +1,6 @@
+
 import { ref, onMounted, reactive } from 'vue'
+
 import { checkGoogleFaviconAccess, getFaviconUrl } from '@/utils/favicon'
 import { eventBus } from '@/utils/eventBus'
 
