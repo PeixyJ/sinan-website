@@ -392,3 +392,9 @@ export class ShareAPI {
     }
 
 }
+
+export class FaviconAPI {
+    static getFavicon(domain: string, size: number = 32) {
+        return `/api/favicon/icon?domain=${encodeURIComponent(domain)}&sz=${size}`
+    }
+}

@@ -9,6 +9,7 @@ const routes = [
     {path: '/auth', component: Login},
     {path: '/github-callback', component: GithubCallback},
     {path: '/collection/space/:id', component: CollectionSpace},
+    {path: '/test-favicon', component: () => import('@/pages/test-favicon.vue')},
     {
         path: '/',
         component: Dashboard,

@@ -17,6 +17,7 @@ import {
   Plus,
   User,
   Edit,
+  Settings,
 } from "lucide-vue-next"
 
 import {
@@ -54,6 +55,14 @@ import {
 import {Input} from '@/components/ui/input'
 import {Label} from '@/components/ui/label'
 import {Button} from '@/components/ui/button'
+import {Separator} from '@/components/ui/separator'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
 import {
   SidebarMenu,
   SidebarMenuButton,
@@ -160,6 +169,12 @@ const accountSettingsErrors = ref<string[]>([])
 const newPasskeyForm = ref({
   name: '',
   description: ''
+})
+
+// 系统设置相关
+const showSystemSettingsDialog = ref(false)
+const systemSettings = ref({
+  faviconSource: 'google' // 'google' | 'sinan'
 })
 
 
@@ -1014,8 +1029,49 @@ const closeAccountSettingsDialog = () => {
   accountSettingsErrors.value = []
 }
 
+// 读取系统设置从Cookie
+const loadSystemSettings = () => {
+  const cookies = document.cookie.split('; ')
+  const settingsCookie = cookies.find(cookie => cookie.startsWith('systemSettings='))
+  
+  if (settingsCookie) {
+    try {
+      const settings = JSON.parse(decodeURIComponent(settingsCookie.split('=')[1]))
+      systemSettings.value = { ...systemSettings.value, ...settings }
+    } catch (error) {
+      console.error('Failed to parse system settings:', error)
+    }
+  }
+}
+
+// 保存系统设置到Cookie
+const saveSystemSettings = () => {
+  const settingsJson = encodeURIComponent(JSON.stringify(systemSettings.value))
+  // 设置Cookie，有效期为365天
+  const expires = new Date()
+  expires.setTime(expires.getTime() + (365 * 24 * 60 * 60 * 1000))
+  document.cookie = `systemSettings=${settingsJson}; expires=${expires.toUTCString()}; path=/`
+  
+  // 触发事件通知其他组件设置已更新
+  eventBus.emit('SYSTEM_SETTINGS_UPDATED', systemSettings.value)
+  
+  closeSystemSettingsDialog()
+}
+
+// 打开系统设置对话框
+const openSystemSettingsDialog = () => {
+  loadSystemSettings() // 加载最新设置
+  showSystemSettingsDialog.value = true
+}
+
+// 关闭系统设置对话框
+const closeSystemSettingsDialog = () => {
+  showSystemSettingsDialog.value = false
+}
+
 onMounted(() => {
   fetchUserInfo()
+  loadSystemSettings() // 初始化时加载系统设置
 })
 </script>
 
@@ -1097,6 +1153,10 @@ onMounted(() => {
             <DropdownMenuItem @click="openAccountSettingsDialog">
               <BadgeCheck/>
               账户设置
+            </DropdownMenuItem>
+            <DropdownMenuItem @click="openSystemSettingsDialog">
+              <Settings/>
+              系统设置
             </DropdownMenuItem>
           </DropdownMenuGroup>
           <DropdownMenuSeparator/>
@@ -1771,6 +1831,52 @@ onMounted(() => {
       <DialogFooter>
         <Button variant="outline" @click="closeAccountSettingsDialog">
           关闭
+        </Button>
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+
+  <!-- 系统设置对话框 -->
+  <Dialog v-model:open="showSystemSettingsDialog">
+    <DialogContent class="sm:max-w-2xl">
+      <DialogHeader>
+        <DialogTitle class="flex items-center gap-2">
+          <Settings class="h-5 w-5"/>
+          系统设置
+        </DialogTitle>
+        <DialogDescription>
+          配置系统相关设置
+        </DialogDescription>
+      </DialogHeader>
+      
+      <div class="space-y-6 py-4">
+        <!-- Favicon图标设置 -->
+        <div class="space-y-4">
+          <h3 class="text-sm font-medium">图标设置</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+            <Label class="text-sm mt-2">Favicon 来源</Label>
+            <div class="md:col-span-2">
+              <Select v-model="systemSettings.faviconSource">
+                <SelectTrigger class="w-full">
+                  <SelectValue placeholder="选择图标来源" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="google">Google S2</SelectItem>
+                  <SelectItem value="sinan">Sinan 服务</SelectItem>
+                </SelectContent>
+              </Select>
+              <p class="text-xs text-muted-foreground mt-2">选择网站图标的获取来源</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <DialogFooter>
+        <Button variant="outline" @click="closeSystemSettingsDialog">
+          取消
+        </Button>
+        <Button @click="saveSystemSettings">
+          保存设置
         </Button>
       </DialogFooter>
     </DialogContent>

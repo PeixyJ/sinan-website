@@ -64,13 +64,13 @@
                     class="h-full w-full object-cover"
                     @error="(e) => (e.target as HTMLImageElement).src = '/icon.png'"
                 />
-                <!-- 其次使用Google Favicon服务，失败时降级到项目Logo -->
+                <!-- 其次使用Google Favicon服务，失败时降级到Sinan API -->
                 <img
                     v-else-if="getFaviconUrl(bookmark.url)"
                     :src="getFaviconUrl(bookmark.url)"
                     :alt="bookmark.name"
                     class="h-full w-full object-cover"
-                    @error="(e) => (e.target as HTMLImageElement).src = '/icon.png'"
+                    @error="(e) => onFaviconError(e, bookmark.url)"
                 />
                 <!-- 默认使用项目Logo -->
                 <img
@@ -209,6 +209,7 @@ import {BookmarkAPI, TagAPI} from '@/services/api'
 import type {BookmarkResp, TagResp} from '@/types/api'
 import AddBookmarkModal from '@/components/Bookmark/AddBookmarkModal.vue'
 import EditBookmarkDialog from '@/components/Bookmark/EditBookmarkDialog.vue'
+import { useFavicon } from '@/composables/useFavicon'
 import {
   ContextMenu,
   ContextMenuContent,
@@ -296,15 +297,23 @@ watch(searchQuery, (newQuery) => {
   debounceSearch(newQuery)
 }, {immediate: false})
 
-// 获取网站的favicon URL
-const getFaviconUrl = (url: string): string => {
-  try {
-    const urlObj = new URL(url)
-    const domain = urlObj.hostname
-    return `https://www.google.com/s2/favicons?domain=${domain}&sz=32`
-  } catch (error) {
-    // URL解析失败，返回空字符串
-    return ''
+// 使用favicon组合式函数
+const { getFaviconUrl } = useFavicon()
+
+// 处理favicon加载错误
+const onFaviconError = (event: Event, url: string) => {
+  const img = event.target as HTMLImageElement
+  const currentSrc = img.src
+  
+  // 如果当前使用的是Google服务
+  if (currentSrc.includes('google.com/s2/favicons')) {
+    console.log(`Google favicon failed for ${url}, trying Sinan API`)
+    // 切换到Sinan API
+    img.src = `/api/favicon/icon?domain=${encodeURIComponent(new URL(url).hostname)}&sz=32`
+  } else {
+    // 如果Sinan API也失败了，使用默认图标
+    console.log(`Sinan API also failed for ${url}, using default icon`)
+    img.src = '/icon.png'
   }
 }
 
