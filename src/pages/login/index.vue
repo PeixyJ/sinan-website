@@ -64,6 +64,11 @@ const openDocs = () => {
           <ForgetPassword v-else @switch-to-login="switchToLogin"/>
         </div>
       </div>
+      <div class="text-center text-sm text-muted-foreground">
+        <a href="https://beian.miit.gov.cn/" target="_blank" class="hover:underline">
+          浙ICP备2021028902号-4
+        </a>
+      </div>
     </div>
     <div class="relative hidden bg-muted lg:block bbg">
 
