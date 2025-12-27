@@ -14,7 +14,7 @@ jobs:
     environment: RUNTIME
     env:
       REGISTRY: registry.cn-hangzhou.aliyuncs.com
-      NAMESPACE: yixing-tech
+      NAMESPACE: yicheng-studio 
       IMAGE_NAME: sinan-website
       REGISTRY_USERNAME: ${{ secrets.ALIYUN_REGISTRY_USERNAME }}
       REGISTRY_PASSWORD: ${{ secrets.ALIYUN_REGISTRY_PASSWORD }}
